@@ -1,0 +1,177 @@
+<!-- Workout Routine Page -->
+<div class="workout-routine-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">fitness_center</mat-icon>
+          Workout Routine
+        </h1>
+        <p class="page-subtitle">Your personalized weekly workout plan</p>
+        <button mat-button (click)="showCurrentWeekInfo()" class="week-info-btn">
+          <mat-icon>calendar_today</mat-icon>
+          Week Info
+        </button>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="navigateToProgress()" class="progress-btn">
+          <mat-icon>analytics</mat-icon>
+          View Progress
+        </button>
+        <button mat-raised-button (click)="getWeeklyOverview()" class="overview-btn">
+          <mat-icon>assessment</mat-icon>
+          Weekly Overview
+        </button>
+        <button mat-raised-button (click)="generateDefaultPlans()" [disabled]="loading" class="generate-btn">
+          <mat-icon>refresh</mat-icon>
+          Generate New Plan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading your workout plans...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading" class="main-content">
+    <!-- Week Overview -->
+    <div class="week-overview">
+      <h2 class="section-title">Weekly Overview</h2>
+      <div class="days-grid">
+        <div 
+          *ngFor="let day of weekDays" 
+          class="day-card"
+          [class.selected]="selectedDay === day"
+          [class.today]="isToday(day)"
+          (click)="selectDay(day)"
+        >
+          <div class="day-header">
+            <h3 class="day-name">{{ day }}</h3>
+            <mat-icon *ngIf="isToday(day)" class="today-icon">today</mat-icon>
+          </div>
+          
+          <div class="day-progress">
+            <ng-container *ngIf="getDayCompletionCount(day).total > 0; else noWorkout">
+              <div class="progress-info">
+                <span class="progress-text">
+                  {{ getDayCompletionCount(day).completed }}/{{ getDayCompletionCount(day).total }} exercises
+                </span>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="(getDayCompletionCount(day).completed / getDayCompletionCount(day).total) * 100"
+                  class="day-progress-bar">
+                </mat-progress-bar>
+              </div>
+            </ng-container>
+            <ng-template #noWorkout>
+              <span class="no-workout">Rest Day</span>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Day Details -->
+    <div *ngIf="currentPlan" class="day-details">
+      <!-- Exercises Section -->
+      <div class="exercises-section">
+        <h3 class="section-subtitle">
+          <mat-icon>fitness_center</mat-icon>
+          Exercises ({{ currentPlan.exercises.length }})
+        </h3>
+        
+        <div class="exercises-grid">
+          <mat-card 
+            *ngFor="let exercise of currentPlan.exercises; trackBy: trackByExerciseId" 
+            class="exercise-card"
+            [class.completed]="isExerciseCompleted(exercise)"
+          >
+            <mat-card-header class="exercise-header">
+              <div class="exercise-title-section">
+                <mat-card-title class="exercise-name">{{ exercise.name }}</mat-card-title>
+                <mat-chip 
+                  *ngIf="exercise.muscle_group"
+                  [style.background-color]="getMuscleGroupColor(exercise.muscle_group)"
+                  class="muscle-chip"
+                >
+                  {{ exercise.muscle_group | titlecase }}
+                </mat-chip>
+              </div>
+              <div class="exercise-actions">
+                <button 
+                  mat-icon-button 
+                  (click)="toggleExerciseCompletion(exercise)"
+                  [color]="isExerciseCompleted(exercise) ? 'primary' : ''"
+                  [disabled]="getExerciseStatus(exercise).locked"
+                  class="completion-btn"
+                  [matTooltip]="getExerciseStatus(exercise).locked ? 
+                    'Exercise locked for ' + getExerciseStatus(exercise).lockTimeRemaining + ' to maintain progress integrity' : 
+                    (isExerciseCompleted(exercise) ? 'Exercise completed' : 'Mark as completed')"
+                >
+                  <mat-icon>
+                    {{ getExerciseStatus(exercise).locked ? 'lock' : 
+                       (isExerciseCompleted(exercise) ? 'check_circle' : 'radio_button_unchecked') }}
+                  </mat-icon>
+                </button>
+                <mat-icon 
+                  *ngIf="getExerciseStatus(exercise).completed && !getExerciseStatus(exercise).locked"
+                  class="completion-badge"
+                  color="primary"
+                >
+                  verified
+                </mat-icon>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content class="exercise-content">
+              <div class="exercise-details">
+                <div class="detail-item">
+                  <mat-icon class="detail-icon">repeat</mat-icon>
+                  <span class="detail-text">{{ exercise.sets }} sets × {{ exercise.reps }} reps</span>
+                </div>
+                
+                <div *ngIf="exercise.weight" class="detail-item">
+                  <mat-icon class="detail-icon">fitness_center</mat-icon>
+                  <span class="detail-text">{{ exercise.weight }} kg</span>
+                </div>
+                
+                <div *ngIf="exercise.duration" class="detail-item">
+                  <mat-icon class="detail-icon">timer</mat-icon>
+                  <span class="detail-text">{{ formatDuration(exercise.duration) }}</span>
+                </div>
+              </div>
+
+              <div *ngIf="exercise.instructions" class="exercise-instructions">
+                <h4 class="instructions-title">
+                  <mat-icon>info</mat-icon>
+                  Instructions
+                </h4>
+                <p class="instructions-text">{{ exercise.instructions }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Plan State -->
+    <div *ngIf="!currentPlan && !loading" class="no-plan-state">
+      <div class="no-plan-content">
+        <mat-icon class="no-plan-icon">event_busy</mat-icon>
+        <h3 class="no-plan-title">No workout planned for {{ selectedDay }}</h3>
+        <p class="no-plan-text">This might be your rest day, or you haven't generated a workout plan yet.</p>
+        <button mat-raised-button color="primary" (click)="generateDefaultPlans()" class="generate-plan-btn">
+          <mat-icon>add</mat-icon>
+          Generate Workout Plan
+        </button>
+      </div>
+    </div>
+
+
+  </div>
+</div>

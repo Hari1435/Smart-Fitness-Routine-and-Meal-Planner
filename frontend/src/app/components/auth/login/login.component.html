@@ -1,0 +1,113 @@
+<div class="login-container">
+  <div class="login-background">
+    <div class="background-overlay"></div>
+  </div>
+  
+  <div class="login-content">
+    <div class="login-card-container">
+      <mat-card class="login-card">
+        <mat-card-content>
+          <!-- Logo Section -->
+          <div class="logo-section">
+            <div class="logo-icon">
+              <mat-icon>fitness_center</mat-icon>
+            </div>
+            <h1 class="logo-text">FitPlanner</h1>
+            <p class="welcome-text">Welcome back! Sign in to continue your fitness journey.</p>
+          </div>
+
+          <!-- Login Form -->
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <div class="form-fields">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput 
+                       type="email" 
+                       formControlName="email"
+                       placeholder="Enter your email"
+                       [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                  {{ getErrorMessage('email') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput 
+                       [type]="hidePassword ? 'password' : 'text'"
+                       formControlName="password"
+                       placeholder="Enter your password"
+                       [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                <button mat-icon-button 
+                        matSuffix 
+                        type="button"
+                        (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hidePassword">
+                  <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                  {{ getErrorMessage('password') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+              <button mat-raised-button 
+                      color="primary" 
+                      type="submit"
+                      class="login-button"
+                      [disabled]="isLoading">
+                <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+                <span *ngIf="!isLoading">Sign In</span>
+                <span *ngIf="isLoading">Signing In...</span>
+              </button>
+
+              <div class="forgot-password">
+                <a href="#" class="forgot-link">Forgot your password?</a>
+              </div>
+            </div>
+          </form>
+
+          <!-- Divider -->
+          <div class="divider">
+            <span class="divider-text">or</span>
+          </div>
+
+          <!-- Sign Up Link -->
+          <div class="signup-link">
+            <p>Don't have an account? 
+              <a routerLink="/signup" class="signup-text">Sign up here</a>
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Side Info Panel -->
+    <div class="info-panel">
+      <div class="info-content">
+        <h2>Transform Your Fitness Journey</h2>
+        <div class="features-list">
+          <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Personalized workout routines</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Custom meal planning</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Progress tracking & analytics</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>Goal-based recommendations</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

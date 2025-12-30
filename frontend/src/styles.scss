@@ -1,0 +1,359 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the theme object.
+$smart-fitness-planner-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+:root {
+  @include mat.all-component-themes($smart-fitness-planner-theme);
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($smart-fitness-planner-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($smart-fitness-planner-theme);
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { 
+  margin: 0; 
+  font-family: 'Roboto', sans-serif;
+  background-color: #ffffff;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Custom Material Theme Colors
+:root {
+  --primary-color: #667eea;
+  --primary-dark: #5a6fd8;
+  --accent-color: #ff6b6b;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-success: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  --border-radius-small: 8px;
+  --border-radius-medium: 12px;
+  --border-radius-large: 16px;
+  --border-radius-xl: 20px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Material Design overrides for enhanced professionalism
+.mat-mdc-button {
+  border-radius: var(--border-radius-xl) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  transition: var(--transition-normal) !important;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.mat-mdc-raised-button {
+  border-radius: var(--border-radius-xl) !important;
+  box-shadow: var(--shadow-medium) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  transition: var(--transition-normal) !important;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-heavy) !important;
+  }
+}
+
+.mat-mdc-card {
+  border-radius: var(--border-radius-large) !important;
+  box-shadow: var(--shadow-light) !important;
+  transition: var(--transition-normal) !important;
+  
+  &:hover {
+    box-shadow: var(--shadow-medium) !important;
+  }
+}
+
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    border-radius: var(--border-radius-medium) !important;
+  }
+  
+  .mat-mdc-form-field-focus-overlay {
+    border-radius: var(--border-radius-medium) !important;
+  }
+}
+
+.mat-mdc-progress-bar {
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.mat-mdc-chip {
+  border-radius: var(--border-radius-xl) !important;
+  font-weight: 500 !important;
+}
+
+// Animation classes
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Responsive typography
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.3rem; }
+  h4 { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+  
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.4rem; }
+  h3 { font-size: 1.2rem; }
+  h4 { font-size: 1rem; }
+}
+
+// Professional utility classes
+.professional-card {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  transition: var(--transition-normal);
+  
+  &:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+}
+
+.professional-button {
+  border-radius: var(--border-radius-xl);
+  font-weight: 600;
+  text-transform: none;
+  transition: var(--transition-normal);
+  
+  &.primary {
+    background: var(--gradient-primary);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+  }
+  
+  &.success {
+    background: var(--gradient-success);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+  }
+}
+
+.professional-input {
+  .mat-mdc-text-field-wrapper {
+    border-radius: var(--border-radius-medium);
+  }
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Professional spacing system
+.spacing-xs { margin: 0.25rem; }
+.spacing-sm { margin: 0.5rem; }
+.spacing-md { margin: 1rem; }
+.spacing-lg { margin: 1.5rem; }
+.spacing-xl { margin: 2rem; }
+.spacing-xxl { margin: 3rem; }
+
+.padding-xs { padding: 0.25rem; }
+.padding-sm { padding: 0.5rem; }
+.padding-md { padding: 1rem; }
+.padding-lg { padding: 1.5rem; }
+.padding-xl { padding: 2rem; }
+.padding-xxl { padding: 3rem; }
+
+// Responsive containers
+.responsive-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
+  }
+}
+
+// Responsive grid
+.responsive-grid {
+  display: grid;
+  gap: 20px;
+  
+  &.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  &.cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    
+    @media (max-width: 992px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  &.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+    
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+// Professional snackbar styles
+::ng-deep .mat-mdc-snack-bar-container {
+  border-radius: var(--border-radius-medium) !important;
+  
+  &.success-snackbar {
+    background-color: var(--success-color) !important;
+    color: white !important;
+  }
+  
+  &.error-snackbar {
+    background-color: var(--error-color) !important;
+    color: white !important;
+  }
+  
+  &.warning-snackbar {
+    background-color: var(--warning-color) !important;
+    color: white !important;
+  }
+}
+
+// Professional dialog styles
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: var(--border-radius-large) !important;
+  box-shadow: var(--shadow-heavy) !important;
+}
+
+// Professional menu styles
+::ng-deep .mat-mdc-menu-panel {
+  border-radius: var(--border-radius-medium) !important;
+  box-shadow: var(--shadow-medium) !important;
+}

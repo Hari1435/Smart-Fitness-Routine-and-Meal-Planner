@@ -1,0 +1,235 @@
+<!-- Progress Tracker Page -->
+<div class="progress-tracker-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">analytics</mat-icon>
+          Workout Tracker
+        </h1>
+        <p class="page-subtitle">Track your fitness journey and achievements</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="navigateToWorkouts()" class="workouts-btn">
+          <mat-icon>fitness_center</mat-icon>
+          View Workouts
+        </button>
+        <button mat-raised-button (click)="refreshData()" [disabled]="loading" class="refresh-btn">
+          <mat-icon>refresh</mat-icon>
+          Refresh Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading your progress data...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading" class="main-content">
+    <!-- Progress Stats Overview -->
+    <div class="stats-overview">
+      <h2 class="section-title">Your Progress Overview</h2>
+      <div class="stats-grid">
+        <!-- Workout Completion -->
+        <mat-card class="stat-card completion-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">check_circle</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Workout Completion</mat-card-title>
+              <mat-card-subtitle>Weekly progress</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ progressStats.completionRate }}%</div>
+            <div class="stat-detail">{{ progressStats.completedWorkouts }}/{{ progressStats.totalWorkouts }} workouts</div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="progressStats.completionRate"
+              class="stat-progress">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Exercise Completion -->
+        <mat-card class="stat-card exercise-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">fitness_center</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Exercise Completion</mat-card-title>
+              <mat-card-subtitle>Individual exercises</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ progressStats.exerciseCompletionRate }}%</div>
+            <div class="stat-detail">{{ progressStats.completedExercises }}/{{ progressStats.totalExercises }} exercises</div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="progressStats.exerciseCompletionRate"
+              class="stat-progress">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Current Streak -->
+        <mat-card class="stat-card streak-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">local_fire_department</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Current Streak</mat-card-title>
+              <mat-card-subtitle>Consecutive days</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ progressStats.currentStreak }}</div>
+            <div class="stat-detail">days in a row</div>
+            <div class="streak-indicator">
+              <mat-icon *ngFor="let day of getStreakArray(progressStats.currentStreak)" 
+                        class="streak-flame">local_fire_department</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Best Streak -->
+        <mat-card class="stat-card best-streak-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">emoji_events</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Best Streak</mat-card-title>
+              <mat-card-subtitle>Personal record</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ progressStats.longestStreak }}</div>
+            <div class="stat-detail">days record</div>
+            <mat-chip-set class="achievement-chips">
+              <mat-chip *ngIf="progressStats.longestStreak >= 7" color="accent" selected>
+                <mat-icon>star</mat-icon>
+                Week Warrior
+              </mat-chip>
+              <mat-chip *ngIf="progressStats.longestStreak >= 3" color="primary" selected>
+                <mat-icon>trending_up</mat-icon>
+                Consistent
+              </mat-chip>
+            </mat-chip-set>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <h2 class="section-title">Visual Progress</h2>
+      <div class="charts-grid">
+        <!-- Weekly Progress Chart -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>bar_chart</mat-icon>
+              Weekly Completion
+            </mat-card-title>
+            <mat-card-subtitle>Daily completion percentages</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #weeklyChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Overall Completion Doughnut -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>donut_large</mat-icon>
+              Overall Progress
+            </mat-card-title>
+            <mat-card-subtitle>Exercise completion ratio</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #completionChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Muscle Group Distribution -->
+        <mat-card class="chart-card full-width">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>pie_chart</mat-icon>
+              Muscle Group Focus
+            </mat-card-title>
+            <mat-card-subtitle>Distribution of exercises by muscle group</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #muscleGroupChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div *ngIf="weeklyProgress" class="weekly-summary">
+      <h2 class="section-title">This Week's Summary</h2>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <mat-icon class="summary-icon">event</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Total Days</div>
+                <div class="summary-value">{{ weeklyProgress.totalDays }}</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">check_circle</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Completed Days</div>
+                <div class="summary-value">{{ weeklyProgress.completedDays }}</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">fitness_center</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Exercises Done</div>
+                <div class="summary-value">{{ weeklyProgress.completedExercises }}/{{ weeklyProgress.totalExercises }}</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">restaurant</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Meals Tracked</div>
+                <div class="summary-value">{{ weeklyProgress.completedMeals }}/{{ weeklyProgress.totalMeals }}</div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+
+  </div>
+
+  <!-- No Data State -->
+  <div *ngIf="!loading && progressStats.totalWorkouts === 0" class="no-data-state">
+    <div class="no-data-content">
+      <mat-icon class="no-data-icon">analytics</mat-icon>
+      <h3 class="no-data-title">No Progress Data Yet</h3>
+      <p class="no-data-text">Start your fitness journey by creating workout plans and completing exercises.</p>
+      <button mat-raised-button color="primary" (click)="navigateToWorkouts()" class="start-btn">
+        <mat-icon>fitness_center</mat-icon>
+        Start Your First Workout
+      </button>
+    </div>
+  </div>
+</div>

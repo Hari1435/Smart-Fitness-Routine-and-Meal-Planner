@@ -1,0 +1,294 @@
+<div class="profile-container">
+  <!-- Header Section -->
+  <div class="profile-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="user-avatar">
+          <div class="avatar-circle">
+            <span class="avatar-text">{{ getUserInitials() }}</span>
+          </div>
+        </div>
+        <div class="user-info">
+          <h1>{{ currentUser?.name || 'Your Profile' }}</h1>
+          <p class="subtitle">Manage your personal information and fitness goals</p>
+          <div class="user-stats" *ngIf="currentUser">
+            <div class="stat-item">
+              <mat-icon>person</mat-icon>
+              <span>{{ currentUser.role | titlecase }}</span>
+            </div>
+            <div class="stat-item" *ngIf="currentUser.age">
+              <mat-icon>cake</mat-icon>
+              <span>{{ currentUser.age }} years old</span>
+            </div>
+            <div class="stat-item" *ngIf="calculateBMI() > 0">
+              <mat-icon>monitor_weight</mat-icon>
+              <span>BMI: {{ calculateBMI() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="profile-content">
+    <div class="container">
+      <mat-tab-group class="profile-tabs" animationDuration="300ms">
+        
+        <!-- Personal Information Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">person</mat-icon>
+            <span class="tab-text">Personal Info</span>
+          </ng-template>
+          
+          <div class="tab-content">
+            <div class="content-wrapper">
+              <div class="section-header">
+                <div class="section-title">
+                  <mat-icon>person</mat-icon>
+                  <h2>Personal Information</h2>
+                </div>
+                <p class="section-subtitle">Update your basic profile details and health metrics</p>
+              </div>
+
+              <mat-card class="profile-card">
+                <mat-card-content>
+                  <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="profile-form">
+                    
+                    <!-- Name Section -->
+                    <div class="form-section">
+                      <h3 class="form-section-title">
+                        <mat-icon>badge</mat-icon>
+                        Basic Information
+                      </h3>
+                      
+                      <div class="form-row">
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Full Name</mat-label>
+                          <input matInput formControlName="name" placeholder="Enter your full name">
+                          <mat-icon matSuffix>person</mat-icon>
+                          <mat-error *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+                            {{ getErrorMessage(profileForm, 'name') }}
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+
+                      <div class="form-row">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Age</mat-label>
+                          <input matInput type="number" formControlName="age" placeholder="25">
+                          <mat-icon matSuffix>cake</mat-icon>
+                          <mat-error *ngIf="profileForm.get('age')?.invalid && profileForm.get('age')?.touched">
+                            {{ getErrorMessage(profileForm, 'age') }}
+                          </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Gender</mat-label>
+                          <mat-select formControlName="gender">
+                            <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">
+                              {{ gender.label }}
+                            </mat-option>
+                          </mat-select>
+                          <mat-icon matSuffix>wc</mat-icon>
+                          <mat-error *ngIf="profileForm.get('gender')?.invalid && profileForm.get('gender')?.touched">
+                            {{ getErrorMessage(profileForm, 'gender') }}
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <!-- Physical Metrics Section -->
+                    <div class="form-section">
+                      <h3 class="form-section-title">
+                        <mat-icon>straighten</mat-icon>
+                        Physical Metrics
+                      </h3>
+                      
+                      <div class="form-row">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Height (cm)</mat-label>
+                          <input matInput type="number" formControlName="height" placeholder="170">
+                          <mat-icon matSuffix>height</mat-icon>
+                          <mat-error *ngIf="profileForm.get('height')?.invalid && profileForm.get('height')?.touched">
+                            {{ getErrorMessage(profileForm, 'height') }}
+                          </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Weight (kg)</mat-label>
+                          <input matInput type="number" formControlName="weight" placeholder="70">
+                          <mat-icon matSuffix>monitor_weight</mat-icon>
+                          <mat-error *ngIf="profileForm.get('weight')?.invalid && profileForm.get('weight')?.touched">
+                            {{ getErrorMessage(profileForm, 'weight') }}
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+
+                      <!-- BMI Calculator -->
+                      <div class="bmi-section" *ngIf="calculateBMI() > 0">
+                        <div class="bmi-card">
+                          <div class="bmi-header">
+                            <mat-icon>monitor_weight</mat-icon>
+                            <h4>Body Mass Index (BMI)</h4>
+                          </div>
+                          <div class="bmi-content">
+                            <div class="bmi-value" [style.color]="getBMIColor(calculateBMI())">
+                              {{ calculateBMI() }}
+                            </div>
+                            <div class="bmi-category" [style.color]="getBMIColor(calculateBMI())">
+                              {{ getBMICategory(calculateBMI()) }}
+                            </div>
+                            <div class="bmi-description">
+                              <p *ngIf="getBMICategory(calculateBMI()) === 'Normal weight'">
+                                Great! You're in the healthy weight range.
+                              </p>
+                              <p *ngIf="getBMICategory(calculateBMI()) === 'Underweight'">
+                                Consider consulting a healthcare provider about healthy weight gain.
+                              </p>
+                              <p *ngIf="getBMICategory(calculateBMI()) === 'Overweight'">
+                                Consider a balanced diet and regular exercise for optimal health.
+                              </p>
+                              <p *ngIf="getBMICategory(calculateBMI()) === 'Obese'">
+                                Consider consulting a healthcare provider for personalized advice.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-actions">
+                      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || profileForm.invalid" class="save-button">
+                        <mat-icon>save</mat-icon>
+                        <span>{{ isLoading ? 'Saving...' : 'Save Profile' }}</span>
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Fitness Goals Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">flag</mat-icon>
+            <span class="tab-text">Fitness Goals</span>
+          </ng-template>
+          
+          <div class="tab-content">
+            <div class="content-wrapper">
+              <div class="section-header">
+                <div class="section-title">
+                  <mat-icon>flag</mat-icon>
+                  <h2>Fitness Goals</h2>
+                </div>
+                <p class="section-subtitle">Set and update your fitness objectives to get personalized recommendations</p>
+              </div>
+
+              <mat-card class="profile-card">
+                <mat-card-content>
+                  <form [formGroup]="goalsForm" (ngSubmit)="onSaveGoals()" class="goals-form">
+                    
+                    <!-- Goal Selection Cards -->
+                    <div class="goals-section">
+                      <h3 class="goals-title">Choose Your Primary Goal</h3>
+                      <div class="goals-grid">
+                        <div *ngFor="let goal of fitnessGoals" 
+                             class="goal-card"
+                             [class.selected]="goalsForm.get('goal')?.value === goal.value"
+                             (click)="selectGoal(goal.value)">
+                          <div class="goal-header">
+                            <div class="goal-icon" [style.color]="goal.color">
+                              <mat-icon>{{ goal.icon }}</mat-icon>
+                            </div>
+                            <div class="goal-selector">
+                              <mat-icon *ngIf="goalsForm.get('goal')?.value === goal.value" class="selected-icon">check_circle</mat-icon>
+                              <mat-icon *ngIf="goalsForm.get('goal')?.value !== goal.value" class="unselected-icon">radio_button_unchecked</mat-icon>
+                            </div>
+                          </div>
+                          <div class="goal-content">
+                            <h4>{{ goal.label }}</h4>
+                            <p>{{ goal.description }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Goal-specific recommendations -->
+                    <div class="goal-details" *ngIf="goalsForm.get('goal')?.value">
+                      <div class="goal-recommendations">
+                        <h3 class="recommendations-title">
+                          <mat-icon>lightbulb</mat-icon>
+                          Personalized Recommendations
+                        </h3>
+                        
+                        <div *ngIf="goalsForm.get('goal')?.value === 'weight_loss'" class="recommendation-card weight-loss">
+                          <div class="recommendation-header">
+                            <mat-icon>trending_down</mat-icon>
+                            <h4>Weight Loss Strategy</h4>
+                          </div>
+                          <div class="recommendation-content">
+                            <ul>
+                              <li><strong>Caloric Deficit:</strong> Create a 300-500 calorie deficit through diet and exercise</li>
+                              <li><strong>Cardio Focus:</strong> Include 150+ minutes of moderate cardio per week</li>
+                              <li><strong>Strength Training:</strong> 2-3 sessions per week to preserve muscle mass</li>
+                              <li><strong>Hydration:</strong> Drink 8-10 glasses of water daily</li>
+                              <li><strong>Sleep:</strong> Aim for 7-9 hours of quality sleep</li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div *ngIf="goalsForm.get('goal')?.value === 'muscle_gain'" class="recommendation-card muscle-gain">
+                          <div class="recommendation-header">
+                            <mat-icon>fitness_center</mat-icon>
+                            <h4>Muscle Building Strategy</h4>
+                          </div>
+                          <div class="recommendation-content">
+                            <ul>
+                              <li><strong>Caloric Surplus:</strong> Eat 200-500 calories above maintenance</li>
+                              <li><strong>Protein Intake:</strong> Consume 1.6-2.2g per kg of body weight daily</li>
+                              <li><strong>Progressive Overload:</strong> Gradually increase weights and intensity</li>
+                              <li><strong>Compound Movements:</strong> Focus on squats, deadlifts, bench press</li>
+                              <li><strong>Recovery:</strong> Allow 48-72 hours rest between training same muscle groups</li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div *ngIf="goalsForm.get('goal')?.value === 'maintenance'" class="recommendation-card maintenance">
+                          <div class="recommendation-header">
+                            <mat-icon>balance</mat-icon>
+                            <h4>Maintenance Strategy</h4>
+                          </div>
+                          <div class="recommendation-content">
+                            <ul>
+                              <li><strong>Balanced Approach:</strong> Maintain current caloric intake</li>
+                              <li><strong>Consistent Routine:</strong> Continue regular exercise 3-5 times per week</li>
+                              <li><strong>Variety:</strong> Mix cardio, strength training, and flexibility work</li>
+                              <li><strong>Lifestyle Balance:</strong> Focus on sustainable healthy habits</li>
+                              <li><strong>Regular Monitoring:</strong> Track progress and adjust as needed</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-actions">
+                      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading || !goalsForm.get('goal')?.value" class="save-button">
+                        <mat-icon>flag</mat-icon>
+                        <span>{{ isLoading ? 'Saving...' : 'Save Goals' }}</span>
+                      </button>
+                    </div>
+                  </form>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>
