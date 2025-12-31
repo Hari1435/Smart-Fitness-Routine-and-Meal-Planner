@@ -11,7 +11,8 @@ class Logger {
   private logLevel: LogLevel;
 
   constructor() {
-    this.logLevel = config.nodeEnv === 'production' ? LogLevel.INFO : LogLevel.DEBUG;
+    // Set to ERROR level in production to minimize console output
+    this.logLevel = config.nodeEnv === 'production' ? LogLevel.ERROR : LogLevel.WARN;
   }
 
   private formatMessage(level: string, message: string, ...args: any[]): string {

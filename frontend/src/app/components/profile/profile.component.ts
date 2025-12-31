@@ -138,7 +138,6 @@ export class ProfileComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error loading profile:', error);
         // Continue with cached user data if backend fails
       }
     });
@@ -175,7 +174,6 @@ export class ProfileComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Profile update error:', error);
           this.snackBar.open(error.message || 'Failed to update profile. Please try again.', 'Close', {
             duration: 3000,
             panelClass: ['error-snackbar']

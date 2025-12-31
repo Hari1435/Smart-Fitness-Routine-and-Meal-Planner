@@ -137,8 +137,8 @@ export const checkResourceOwnership = (userIdParam: string = 'userId') => {
       const resourceUserId = parseInt(req.params[userIdParam]);
       const currentUserId = req.user.userId;
 
-      // Allow if user is admin or owns the resource
-      if (req.user.role === 'admin' || currentUserId === resourceUserId) {
+      // Allow if user owns the resource
+      if (currentUserId === resourceUserId) {
         next();
         return;
       }

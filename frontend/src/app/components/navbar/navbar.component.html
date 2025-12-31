@@ -22,22 +22,6 @@
         <a mat-button routerLink="/progress" routerLinkActive="active" class="nav-link">Workout Progress</a>
         <a mat-button routerLink="/food-search" routerLinkActive="active" class="nav-link">Food Search</a>
       </ng-container>
-      
-      <!-- Trainer routes - available to trainers and admins -->
-      <ng-container *ngIf="hasRole('trainer') || hasRole('admin')">
-        <a mat-button routerLink="/trainer-dashboard" routerLinkActive="active" class="nav-link trainer-link">
-          <mat-icon>supervisor_account</mat-icon>
-          Trainer
-        </a>
-      </ng-container>
-      
-      <!-- Admin routes - available to admins only -->
-      <ng-container *ngIf="hasRole('admin')">
-        <a mat-button routerLink="/admin/users" routerLinkActive="active" class="nav-link admin-link">
-          <mat-icon>admin_panel_settings</mat-icon>
-          Admin
-        </a>
-      </ng-container>
     </nav>
     
     <!-- Desktop Auth Buttons -->
@@ -107,22 +91,6 @@
         <a mat-button routerLink="/profile" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
           <mat-icon>person</mat-icon>
           <span>Profile</span>
-        </a>
-      </ng-container>
-      
-      <!-- Trainer routes - available to trainers and admins -->
-      <ng-container *ngIf="hasRole('trainer') || hasRole('admin')">
-        <a mat-button routerLink="/trainer-dashboard" routerLinkActive="active" class="mobile-nav-link trainer-link" (click)="closeMobileMenu()">
-          <mat-icon>supervisor_account</mat-icon>
-          <span>Trainer Dashboard</span>
-        </a>
-      </ng-container>
-      
-      <!-- Admin routes - available to admins only -->
-      <ng-container *ngIf="hasRole('admin')">
-        <a mat-button routerLink="/admin/users" routerLinkActive="active" class="mobile-nav-link admin-link" (click)="closeMobileMenu()">
-          <mat-icon>admin_panel_settings</mat-icon>
-          <span>User Management</span>
         </a>
       </ng-container>
     </nav>

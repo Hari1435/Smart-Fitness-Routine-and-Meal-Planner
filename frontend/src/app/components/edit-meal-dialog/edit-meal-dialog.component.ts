@@ -631,7 +631,6 @@ export class EditMealDialogComponent implements OnInit {
         throw new Error('Failed to update meal');
       }
     } catch (error) {
-      console.error('Error saving meal:', error);
       this.snackBar.open('Failed to save meal. Please try again.', 'Close', {
         duration: 3000
       });
@@ -659,7 +658,7 @@ export class EditMealDialogComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error reloading meal plan:', error);
+        // Silent error handling for background reload
       }
     });
   }

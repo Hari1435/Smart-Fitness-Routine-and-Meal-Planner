@@ -221,6 +221,34 @@
       line-height: 1.2;
     }
     
+    .animation-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 30px;
+      
+      .lottie-animation {
+        width: 100%;
+        max-width: 400px;
+        height: 300px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        box-sizing: border-box;
+      }
+    }
+    
+    .benefits-summary {
+      .benefits-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        opacity: 0.95;
+        margin: 0;
+        text-align: center;
+      }
+    }
+    
     .benefits-list {
       .benefit-item {
         display: flex;
@@ -334,6 +362,20 @@
         margin-bottom: 25px;
       }
       
+      .animation-container {
+        margin-bottom: 20px;
+        
+        .lottie-animation {
+          max-width: 350px;
+          height: 250px;
+          padding: 15px;
+        }
+      }
+      
+      .benefits-summary .benefits-text {
+        font-size: 1rem;
+      }
+      
       .benefits-list {
         display: grid;
         grid-template-columns: 1fr;
@@ -425,6 +467,16 @@
       font-size: 1.6rem;
     }
     
+    .animation-container .lottie-animation {
+      max-width: 300px;
+      height: 200px;
+      padding: 10px;
+    }
+    
+    .benefits-summary .benefits-text {
+      font-size: 0.9rem;
+    }
+    
     .benefits-list .benefit-item {
       flex-direction: row;
       text-align: left;
@@ -484,6 +536,11 @@
   .info-panel .info-content h2 {
     font-size: 1.4rem;
   }
+  
+  .info-panel .info-content .animation-container .lottie-animation {
+    max-width: 280px;
+    height: 180px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -505,13 +562,15 @@
     font-size: 0.85rem;
   }
   
-  .info-panel .info-content .benefits-list .benefit-item {
-    flex-direction: column;
-    text-align: center;
+  .info-panel .info-content {
+    .animation-container .lottie-animation {
+      max-width: 250px;
+      height: 150px;
+      padding: 8px;
+    }
     
-    .benefit-icon {
-      margin-right: 0;
-      margin-bottom: 10px;
+    .benefits-summary .benefits-text {
+      font-size: 0.8rem;
     }
   }
 }

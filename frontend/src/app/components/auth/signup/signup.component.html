@@ -44,28 +44,13 @@
                 <input matInput 
                        type="email" 
                        formControlName="email"
-                       placeholder="Enter your email"
+                       placeholder="Enter your Gmail address (e.g., user@gmail.com)"
                        (input)="clearServerErrors()"
                        [class.error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
                 <mat-icon matSuffix>email</mat-icon>
                 <mat-error *ngIf="(signupForm.get('email')?.invalid && signupForm.get('email')?.touched) || fieldErrors['email']">
                   {{ getErrorMessage('email') }}
                 </mat-error>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Account Type</mat-label>
-                <mat-select formControlName="role">
-                  <mat-option value="user">
-                    <mat-icon>person</mat-icon>
-                    <span class="option-text">User - I want to get fit</span>
-                  </mat-option>
-                  <mat-option value="trainer">
-                    <mat-icon>fitness_center</mat-icon>
-                    <span class="option-text">Trainer - I help others get fit</span>
-                  </mat-option>
-                </mat-select>
-                <mat-icon matSuffix>account_circle</mat-icon>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="full-width">
@@ -134,40 +119,21 @@
       </mat-card>
     </div>
 
-    <!-- Side Info Panel -->
+    <!-- Side Info Panel with Animation -->
     <div class="info-panel">
       <div class="info-content">
         <h2>Join the FitPlanner Community</h2>
-        <div class="benefits-list">
-          <div class="benefit-item">
-            <div class="benefit-icon">
-              <mat-icon>trending_up</mat-icon>
-            </div>
-            <div class="benefit-text">
-              <h4>Track Your Progress</h4>
-              <p>Monitor your fitness journey with detailed analytics and visual progress charts.</p>
-            </div>
-          </div>
-          
-          <div class="benefit-item">
-            <div class="benefit-icon">
-              <mat-icon>restaurant_menu</mat-icon>
-            </div>
-            <div class="benefit-text">
-              <h4>Smart Meal Planning</h4>
-              <p>Get personalized meal plans that align with your fitness goals and dietary preferences.</p>
-            </div>
-          </div>
-          
-          <div class="benefit-item">
-            <div class="benefit-icon">
-              <mat-icon>group</mat-icon>
-            </div>
-            <div class="benefit-text">
-              <h4>Expert Guidance</h4>
-              <p>Connect with certified trainers and get professional advice on your fitness journey.</p>
-            </div>
-          </div>
+        
+        <!-- Lottie Animation Container -->
+        <div class="animation-container">
+          <div #lottieContainer class="lottie-animation"></div>
+        </div>
+        
+        <div class="benefits-summary">
+          <p class="benefits-text">
+            Transform your fitness journey with personalized workouts, smart meal planning, 
+            and expert guidance. Join thousands of users who have achieved their fitness goals with FitPlanner.
+          </p>
         </div>
       </div>
     </div>

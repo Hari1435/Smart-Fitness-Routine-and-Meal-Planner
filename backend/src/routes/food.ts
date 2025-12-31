@@ -28,7 +28,7 @@ router.get('/popular/indian', FoodController.getPopularIndianFoods);
 /**
  * @route   GET /api/v1/foods/validate-api
  * @desc    Validate USDA API key configuration
- * @access  Public (for admin/debugging)
+ * @access  Public (for debugging)
  */
 router.get('/validate-api', FoodController.validateApiKey);
 

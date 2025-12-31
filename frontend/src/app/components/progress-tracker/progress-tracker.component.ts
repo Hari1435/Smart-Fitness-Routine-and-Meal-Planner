@@ -111,7 +111,6 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading progress dashboard:', error);
         this.loadWorkoutPlans(); // Fallback to original method
       }
     });
@@ -135,7 +134,6 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading workout plans:', error);
         this.loading = false;
         this.snackBar.open('Error loading progress data', 'Close', {
           duration: 3000
@@ -154,7 +152,6 @@ export class ProgressTrackerComponent implements OnInit {
         setTimeout(() => this.createCharts(), 100);
       },
       error: (error) => {
-        console.error('Error loading weekly progress:', error);
         this.loading = false;
       }
     });
@@ -456,8 +453,7 @@ export class ProgressTrackerComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           const report = response.data.report;
-          console.log('Weekly Report:', report);
-          // Display achievements in snackbar
+          
           if (report.achievements && report.achievements.length > 0) {
             this.snackBar.open(`🎉 ${report.achievements[0]}`, 'Close', {
               duration: 4000
@@ -466,7 +462,7 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading weekly report:', error);
+        // Silent error handling
       }
     });
   }
@@ -481,7 +477,7 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading muscle group progress:', error);
+        // Silent error handling
       }
     });
   }
@@ -501,7 +497,7 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading workout streak:', error);
+        // Silent error handling
       }
     });
   }
@@ -511,7 +507,6 @@ export class ProgressTrackerComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           const stats = response.data.statistics;
-          console.log('Workout Statistics:', stats);
           
           // Update progress stats with enhanced data
           this.progressStats = {
@@ -528,7 +523,7 @@ export class ProgressTrackerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading workout statistics:', error);
+        // Silent error handling
       }
     });
   }

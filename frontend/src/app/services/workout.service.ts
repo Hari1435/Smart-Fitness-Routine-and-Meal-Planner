@@ -170,15 +170,15 @@ export class WorkoutService {
       next: () => {
         this.generateNewWeekPlans().subscribe({
           next: () => {
-            console.log('Weekly reset completed successfully');
+            // Weekly reset completed successfully
           },
           error: (error) => {
-            console.error('Error generating new week plans:', error);
+            // Silent error handling for weekly reset
           }
         });
       },
       error: (error) => {
-        console.error('Error archiving current week:', error);
+        // Silent error handling for archive operation
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -8,9 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, SignupData } from '../../../services/auth.service';
+import lottie from 'lottie-web';
 
 @Component({
   selector: 'app-signup',
@@ -25,13 +25,14 @@ import { AuthService, SignupData } from '../../../services/auth.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatSelectModule
+    MatSnackBarModule
   ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, AfterViewInit {
+  @ViewChild('lottieContainer', { static: false }) lottieContainer!: ElementRef;
+  
   signupForm!: FormGroup;
   isLoading = false;
   hidePassword = true;
@@ -50,14 +51,51 @@ export class SignupComponent implements OnInit {
     this.initializeForm();
   }
 
+  ngAfterViewInit(): void {
+    this.loadLottieAnimation();
+  }
+
+  private loadLottieAnimation(): void {
+    if (this.lottieContainer) {
+      try {
+        lottie.loadAnimation({
+          container: this.lottieContainer.nativeElement,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: '/assets/animations/FitnessAnimation.json'
+        });
+      } catch (error) {
+        // Fallback: Add a simple fitness icon if animation fails
+        this.lottieContainer.nativeElement.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 4rem; color: rgba(255,255,255,0.8);">
+            🏋️‍♀️
+          </div>
+        `;
+      }
+    }
+  }
+
   private initializeForm(): void {
     this.signupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email, this.gmailValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-      role: ['user', [Validators.required]]
+      confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  private gmailValidator(control: any) {
+    if (!control.value) {
+      return null; // Let required validator handle empty values
+    }
+    
+    const email = control.value.toLowerCase();
+    if (!email.endsWith('@gmail.com')) {
+      return { gmailRequired: true };
+    }
+    
+    return null;
   }
 
   private passwordMatchValidator(form: FormGroup) {
@@ -85,7 +123,11 @@ export class SignupComponent implements OnInit {
       this.serverError = '';
       this.fieldErrors = {};
       
-      const signupData: SignupData = this.signupForm.value;
+      // Add role as 'user' to the form data
+      const signupData: SignupData = {
+        ...this.signupForm.value,
+        role: 'user'
+      };
 
       this.authService.signup(signupData).subscribe({
         next: (response) => {
@@ -156,6 +198,9 @@ export class SignupComponent implements OnInit {
     }
     if (control?.hasError('email')) {
       return 'Please enter a valid email address (e.g., user@example.com)';
+    }
+    if (control?.hasError('gmailRequired')) {
+      return 'Email must be a Gmail address (e.g., user@gmail.com)';
     }
     if (control?.hasError('minlength')) {
       const minLength = control.errors?.['minlength'].requiredLength;

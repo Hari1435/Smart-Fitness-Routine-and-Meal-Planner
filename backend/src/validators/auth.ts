@@ -1,6 +1,14 @@
 import Joi from 'joi';
 import { CreateUserRequest, LoginRequest, UpdateProfileRequest, UpdateGoalsRequest } from '../types';
 
+// Custom Gmail validator
+const gmailValidator = (value: string, helpers: any) => {
+  if (!value.toLowerCase().endsWith('@gmail.com')) {
+    return helpers.error('string.gmail');
+  }
+  return value;
+};
+
 // User registration validation schema
 export const registerSchema = Joi.object<CreateUserRequest>({
   name: Joi.string()
@@ -18,10 +26,12 @@ export const registerSchema = Joi.object<CreateUserRequest>({
     .email()
     .lowercase()
     .trim()
+    .custom(gmailValidator)
     .required()
     .messages({
       'string.empty': 'Email address is required',
-      'string.email': 'Please enter a valid email address (e.g., user@example.com)',
+      'string.email': 'Please enter a valid email address (e.g., user@gmail.com)',
+      'string.gmail': 'Email must be a Gmail address (e.g., user@gmail.com)',
     }),
   
   password: Joi.string()
@@ -35,10 +45,10 @@ export const registerSchema = Joi.object<CreateUserRequest>({
     }),
   
   role: Joi.string()
-    .valid('user', 'trainer')
+    .valid('user')
     .default('user')
     .messages({
-      'any.only': 'Role must be either user or trainer',
+      'any.only': 'Role must be user',
     }),
 });
 
@@ -48,10 +58,12 @@ export const loginSchema = Joi.object<LoginRequest>({
     .email()
     .lowercase()
     .trim()
+    .custom(gmailValidator)
     .required()
     .messages({
       'string.empty': 'Email address is required',
-      'string.email': 'Please enter a valid email address (e.g., user@example.com)',
+      'string.email': 'Please enter a valid email address (e.g., user@gmail.com)',
+      'string.gmail': 'Email must be a Gmail address (e.g., user@gmail.com)',
     }),
   
   password: Joi.string()
@@ -130,10 +142,12 @@ export const emailSchema = Joi.object({
     .email()
     .lowercase()
     .trim()
+    .custom(gmailValidator)
     .required()
     .messages({
       'string.empty': 'Email is required',
       'string.email': 'Please provide a valid email address',
+      'string.gmail': 'Email must be a Gmail address (e.g., user@gmail.com)',
     }),
 });
 
@@ -190,9 +204,11 @@ export const forgotPasswordSchema = Joi.object({
     .email()
     .lowercase()
     .trim()
+    .custom(gmailValidator)
     .required()
     .messages({
       'string.empty': 'Email address is required',
-      'string.email': 'Please enter a valid email address (e.g., user@example.com)',
+      'string.email': 'Please enter a valid email address (e.g., user@gmail.com)',
+      'string.gmail': 'Email must be a Gmail address (e.g., user@gmail.com)',
     }),
 });

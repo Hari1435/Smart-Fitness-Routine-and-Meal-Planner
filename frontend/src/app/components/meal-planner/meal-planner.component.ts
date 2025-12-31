@@ -90,7 +90,7 @@ export class MealPlannerComponent implements OnInit {
       this.snackBar.open('Please log in to access your meal plans', 'Login', {
         duration: 5000
       }).onAction().subscribe(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/unauthorized']);
       });
       this.loading = false;
       return;
@@ -115,14 +115,13 @@ export class MealPlannerComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading meal plan:', error);
         this.loading = false;
         
         if (error.status === 401) {
-          this.snackBar.open('Please log in to access meal plans', 'Login', {
+          this.snackBar.open('Please log in to access meal plans', 'Go to Login', {
             duration: 5000
           }).onAction().subscribe(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/unauthorized']);
           });
         } else if (error.status === 404) {
           // No meal plan found, generate one
@@ -162,7 +161,6 @@ export class MealPlannerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error updating meal consumption:', error);
         this.snackBar.open('Error updating meal status', 'Close', {
           duration: 3000
         });
@@ -238,14 +236,13 @@ export class MealPlannerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error generating meal plan:', error);
         this.loading = false;
         
         if (error.status === 401) {
-          this.snackBar.open('Please log in to generate meal plans', 'Login', {
+          this.snackBar.open('Please log in to generate meal plans', 'Go to Login', {
             duration: 5000
           }).onAction().subscribe(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/unauthorized']);
           });
         } else {
           this.snackBar.open('Error generating meal plan. Please try again.', 'Close', {
@@ -325,8 +322,7 @@ export class MealPlannerComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading weekly meal plans:', error);
-        // Don't show error to user as this is background loading
+        // Silent error handling for background loading
       }
     });
   }

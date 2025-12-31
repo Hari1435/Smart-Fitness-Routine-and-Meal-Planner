@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { AuthService, LoginCredentials } from '../../../services/auth.service';
+import lottie from 'lottie-web';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,9 @@ import { AuthService, LoginCredentials } from '../../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
+  @ViewChild('lottieContainer', { static: false }) lottieContainer!: ElementRef;
+  
   loginForm!: FormGroup;
   isLoading = false;
   hidePassword = true;
@@ -47,11 +50,49 @@ export class LoginComponent implements OnInit {
     this.initializeForm();
   }
 
+  ngAfterViewInit(): void {
+    this.loadLottieAnimation();
+  }
+
+  private loadLottieAnimation(): void {
+    if (this.lottieContainer) {
+      try {
+        lottie.loadAnimation({
+          container: this.lottieContainer.nativeElement,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: '/assets/animations/Healthyfoodfordietfitness.json'
+        });
+      } catch (error) {
+        // Fallback: Add a simple food icon if animation fails
+        this.lottieContainer.nativeElement.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 4rem; color: rgba(255,255,255,0.8);">
+            🥗
+          </div>
+        `;
+      }
+    }
+  }
+
   private initializeForm(): void {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email, this.gmailValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  private gmailValidator(control: any) {
+    if (!control.value) {
+      return null; // Let required validator handle empty values
+    }
+    
+    const email = control.value.toLowerCase();
+    if (!email.endsWith('@gmail.com')) {
+      return { gmailRequired: true };
+    }
+    
+    return null;
   }
 
   onSubmit(): void {
@@ -127,6 +168,9 @@ export class LoginComponent implements OnInit {
     }
     if (control?.hasError('email')) {
       return 'Please enter a valid email address (e.g., user@example.com)';
+    }
+    if (control?.hasError('gmailRequired')) {
+      return 'Email must be a Gmail address (e.g., user@gmail.com)';
     }
     if (control?.hasError('minlength')) {
       return 'Password must be at least 6 characters long';

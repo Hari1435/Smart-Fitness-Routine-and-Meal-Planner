@@ -489,7 +489,7 @@ export class WorkoutMealPlanModel {
         try {
           return JSON.parse(value);
         } catch (error) {
-          console.warn('Failed to parse JSON:', value);
+          // Silently return default value for invalid JSON
           return defaultValue;
         }
       } else if (typeof value === 'object' && value !== null) {

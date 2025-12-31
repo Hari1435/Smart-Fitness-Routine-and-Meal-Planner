@@ -4,6 +4,41 @@
   </div>
   
   <div class="login-content">
+    <!-- Left Side - Animation Panel -->
+    <div class="animation-panel">
+      <div class="animation-content">
+        <h2>Fuel Your Fitness Journey</h2>
+        
+        <!-- Lottie Animation Container -->
+        <div class="animation-container">
+          <div #lottieContainer class="lottie-animation"></div>
+        </div>
+        
+        <div class="features-summary">
+          <p class="features-text">
+            Discover personalized nutrition plans, track your meals, and achieve your fitness goals 
+            with our smart meal planning system designed for your success.
+          </p>
+          
+          <div class="features-highlights">
+            <div class="feature-highlight">
+              <mat-icon>restaurant_menu</mat-icon>
+              <span>Smart Meal Planning</span>
+            </div>
+            <div class="feature-highlight">
+              <mat-icon>analytics</mat-icon>
+              <span>Nutrition Tracking</span>
+            </div>
+            <div class="feature-highlight">
+              <mat-icon>trending_up</mat-icon>
+              <span>Goal Achievement</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
     <div class="login-card-container">
       <mat-card class="login-card">
         <mat-card-content>
@@ -30,7 +65,7 @@
                 <input matInput 
                        type="email" 
                        formControlName="email"
-                       placeholder="Enter your email"
+                       placeholder="Enter your Gmail address (e.g., user@gmail.com)"
                        (input)="clearServerErrors()"
                        [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
                 <mat-icon matSuffix>email</mat-icon>
@@ -91,31 +126,6 @@
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
-
-    <!-- Side Info Panel -->
-    <div class="info-panel">
-      <div class="info-content">
-        <h2>Transform Your Fitness Journey</h2>
-        <div class="features-list">
-          <div class="feature-item">
-            <mat-icon>check_circle</mat-icon>
-            <span>Personalized workout routines</span>
-          </div>
-          <div class="feature-item">
-            <mat-icon>check_circle</mat-icon>
-            <span>Custom meal planning</span>
-          </div>
-          <div class="feature-item">
-            <mat-icon>check_circle</mat-icon>
-            <span>Progress tracking & analytics</span>
-          </div>
-          <div class="feature-item">
-            <mat-icon>check_circle</mat-icon>
-            <span>Goal-based recommendations</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

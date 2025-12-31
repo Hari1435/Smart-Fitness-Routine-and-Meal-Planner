@@ -39,6 +39,75 @@
   box-sizing: border-box;
 }
 
+.animation-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  
+  .animation-content {
+    max-width: 450px;
+    
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      line-height: 1.2;
+      text-align: center;
+    }
+    
+    .animation-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 30px;
+      
+      .lottie-animation {
+        width: 100%;
+        max-width: 400px;
+        height: 300px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        box-sizing: border-box;
+      }
+    }
+    
+    .features-summary {
+      .features-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        opacity: 0.95;
+        margin: 0 0 25px 0;
+        text-align: center;
+      }
+      
+      .features-highlights {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        
+        .feature-highlight {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          opacity: 0.9;
+          
+          mat-icon {
+            margin-right: 12px;
+            color: #4caf50;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
 .login-card-container {
   display: flex;
   justify-content: center;
@@ -272,39 +341,6 @@
   }
 }
 
-.info-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  
-  .info-content {
-    max-width: 400px;
-    
-    h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 30px;
-      line-height: 1.2;
-    }
-    
-    .features-list {
-      .feature-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        
-        mat-icon {
-          margin-right: 15px;
-          color: #4caf50;
-          font-size: 24px;
-        }
-      }
-    }
-  }
-}
-
 // Error states
 .mat-mdc-form-field.mat-form-field-invalid {
   .mat-mdc-text-field-wrapper {
@@ -364,30 +400,48 @@
     margin: 0 auto;
   }
   
-  .info-panel {
+  .animation-panel {
     order: -1;
     padding: 20px 0;
     
-    .info-content {
+    .animation-content {
       text-align: center;
       
       h2 {
         font-size: 2rem;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
       }
       
-      .features-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+      .animation-container {
+        margin-bottom: 20px;
         
-        .feature-item {
-          margin-bottom: 10px;
+        .lottie-animation {
+          max-width: 350px;
+          height: 250px;
+          padding: 15px;
+        }
+      }
+      
+      .features-summary {
+        .features-text {
           font-size: 1rem;
+        }
+        
+        .features-highlights {
+          flex-direction: row;
+          justify-content: space-around;
+          flex-wrap: wrap;
+          gap: 10px;
           
-          mat-icon {
-            font-size: 20px;
-            margin-right: 10px;
+          .feature-highlight {
+            font-size: 0.9rem;
+            
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+              margin-right: 8px;
+            }
           }
         }
       }
@@ -462,18 +516,30 @@
     }
   }
   
-  .info-panel .info-content {
+  .animation-panel .animation-content {
     h2 {
       font-size: 1.6rem;
     }
     
-    .features-list {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      
-      .feature-item {
+    .animation-container .lottie-animation {
+      max-width: 300px;
+      height: 200px;
+      padding: 10px;
+    }
+    
+    .features-summary {
+      .features-text {
         font-size: 0.9rem;
-        justify-content: center;
+      }
+      
+      .features-highlights {
+        flex-direction: column;
+        gap: 8px;
+        
+        .feature-highlight {
+          font-size: 0.85rem;
+          justify-content: center;
+        }
       }
     }
   }
@@ -510,6 +576,21 @@
     padding: 8px;
     font-size: 0.85rem;
   }
+  
+  .animation-panel .animation-content {
+    h2 {
+      font-size: 1.4rem;
+    }
+    
+    .animation-container .lottie-animation {
+      max-width: 280px;
+      height: 180px;
+    }
+    
+    .features-summary .features-text {
+      font-size: 0.8rem;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -529,6 +610,18 @@
   .login-form .form-actions .login-button {
     height: 40px;
     font-size: 0.85rem;
+  }
+  
+  .animation-panel .animation-content {
+    .animation-container .lottie-animation {
+      max-width: 250px;
+      height: 150px;
+      padding: 8px;
+    }
+    
+    .features-summary .features-text {
+      font-size: 0.75rem;
+    }
   }
 }
 
@@ -551,6 +644,34 @@
     
     .logo-text {
       font-size: 1.2rem;
+    }
+  }
+  
+  .animation-panel .animation-content {
+    h2 {
+      font-size: 1.2rem;
+    }
+    
+    .animation-container .lottie-animation {
+      max-width: 220px;
+      height: 120px;
+      padding: 5px;
+    }
+    
+    .features-summary {
+      .features-text {
+        font-size: 0.7rem;
+      }
+      
+      .features-highlights .feature-highlight {
+        font-size: 0.7rem;
+        
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+      }
     }
   }
 }

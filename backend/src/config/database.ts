@@ -51,7 +51,7 @@ export const initializeDatabase = async (): Promise<void> => {
         height DECIMAL(5,2),
         weight DECIMAL(5,2),
         goal ENUM('weight_loss', 'muscle_gain', 'maintenance'),
-        role ENUM('user', 'trainer', 'admin') DEFAULT 'user',
+        role ENUM('user') DEFAULT 'user',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_email (email),
         INDEX idx_role (role),

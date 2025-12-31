@@ -49,8 +49,21 @@ export class ForgotPasswordComponent implements OnInit {
 
   private initializeForm(): void {
     this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email, this.gmailValidator]]
     });
+  }
+
+  private gmailValidator(control: any) {
+    if (!control.value) {
+      return null; // Let required validator handle empty values
+    }
+    
+    const email = control.value.toLowerCase();
+    if (!email.endsWith('@gmail.com')) {
+      return { gmailRequired: true };
+    }
+    
+    return null;
   }
 
   onSubmit(): void {
@@ -123,6 +136,9 @@ export class ForgotPasswordComponent implements OnInit {
     }
     if (control?.hasError('email')) {
       return 'Please enter a valid email address (e.g., user@example.com)';
+    }
+    if (control?.hasError('gmailRequired')) {
+      return 'Email must be a Gmail address (e.g., user@gmail.com)';
     }
     return '';
   }

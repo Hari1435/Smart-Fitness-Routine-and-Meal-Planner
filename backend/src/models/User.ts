@@ -306,7 +306,7 @@ export class UserModel {
   }
 
   /**
-   * Get all users (admin only)
+   * Get all users (deprecated - no longer used)
    */
   static async findAll(page: number = 1, limit: number = 10): Promise<{ users: User[]; total: number }> {
     const connection = await pool.getConnection();

@@ -264,7 +264,6 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading archived weeks:', error);
         this.snackBar.open('Error loading archived weeks', 'Close', { duration: 3000 });
       }
     });
@@ -273,10 +272,10 @@ export class WorkoutRoutineComponent implements OnInit {
   loadWorkoutPlans(): void {
     // Check if user is authenticated first
     if (!this.authService.isAuthenticated()) {
-      this.snackBar.open('Please log in to access your workout plans', 'Login', {
+      this.snackBar.open('Please log in to access your workout plans', 'Go to Login', {
         duration: 5000
       }).onAction().subscribe(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/unauthorized']);
       });
       this.loading = false;
       return;
@@ -297,7 +296,6 @@ export class WorkoutRoutineComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading workout plans:', error);
         this.loading = false;
         
         // Ensure workoutPlans is always an array to prevent undefined errors
@@ -306,10 +304,10 @@ export class WorkoutRoutineComponent implements OnInit {
         }
         
         if (error.status === 401) {
-          this.snackBar.open('Please log in to access your workout plans', 'Login', {
+          this.snackBar.open('Please log in to access your workout plans', 'Go to Login', {
             duration: 5000
           }).onAction().subscribe(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/unauthorized']);
           });
         } else {
           this.generateDefaultPlans();
@@ -321,10 +319,10 @@ export class WorkoutRoutineComponent implements OnInit {
   generateDefaultPlans(): void {
     // Check if user is authenticated first
     if (!this.authService.isAuthenticated()) {
-      this.snackBar.open('Please log in to generate workout plans', 'Login', {
+      this.snackBar.open('Please log in to generate workout plans', 'Go to Login', {
         duration: 5000
       }).onAction().subscribe(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/unauthorized']);
       });
       return;
     }
@@ -348,14 +346,13 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error generating workout routine:', error);
         this.loading = false;
         
         if (error.status === 401) {
-          this.snackBar.open('Please log in to generate workout routines', 'Login', {
+          this.snackBar.open('Please log in to generate workout routines', 'Go to Login', {
             duration: 5000
           }).onAction().subscribe(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/unauthorized']);
           });
         } else {
           this.snackBar.open('Error generating workout routine. Please try again.', 'Close', {
@@ -423,7 +420,6 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error updating exercise completion:', error);
         this.snackBar.open('Error updating exercise status', 'Close', {
           duration: 3000
         });
@@ -464,7 +460,7 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error getting streak info:', error);
+        // Silent error handling for streak info
       }
     });
   }
@@ -549,7 +545,6 @@ export class WorkoutRoutineComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error adjusting workout intensity:', error);
         this.snackBar.open('Error adjusting workout intensity', 'Close', {
           duration: 3000
         });
@@ -582,7 +577,6 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error getting weekly overview:', error);
         this.snackBar.open('Error loading weekly progress', 'Close', { duration: 3000 });
       }
     });
@@ -639,7 +633,7 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error getting recommendations:', error);
+        // Silent error handling for recommendations
       }
     });
   }
@@ -656,7 +650,6 @@ export class WorkoutRoutineComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error resetting progress:', error);
           this.snackBar.open('Error resetting progress', 'Close', {
             duration: 3000
           });
@@ -691,7 +684,6 @@ export class WorkoutRoutineComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error getting streak:', error);
         this.snackBar.open('Error loading streak information', 'Close', { duration: 3000 });
       }
     });

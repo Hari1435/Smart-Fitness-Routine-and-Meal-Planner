@@ -96,17 +96,17 @@ router.get('/progress', authenticate, WorkoutMealPlanController.getWeeklyProgres
 
 /**
  * @route   GET /api/v1/workout-meal-plans/statistics
- * @desc    Get plan statistics (Admin/Trainer only)
- * @access  Private (Admin/Trainer)
+ * @desc    Get plan statistics (User only)
+ * @access  Private (User)
  */
-router.get('/statistics', authenticate, authorize('admin', 'trainer'), WorkoutMealPlanController.getPlanStatistics);
+router.get('/statistics', authenticate, WorkoutMealPlanController.getPlanStatistics);
 
 /**
  * @route   GET /api/v1/workout-meal-plans/goal/:goal
- * @desc    Get plans by goal (Admin/Trainer only)
- * @access  Private (Admin/Trainer)
+ * @desc    Get plans by goal (User only)
+ * @access  Private (User)
  */
-router.get('/goal/:goal', authenticate, authorize('admin', 'trainer'), WorkoutMealPlanController.getPlansByGoal);
+router.get('/goal/:goal', authenticate, WorkoutMealPlanController.getPlansByGoal);
 
 /**
  * @route   POST /api/v1/workout-meal-plans

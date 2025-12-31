@@ -13,7 +13,7 @@ export interface User {
   height?: number;
   weight?: number;
   goal?: 'weight_loss' | 'muscle_gain' | 'maintenance';
-  role: 'user' | 'trainer' | 'admin';
+  role: 'user';
   created_at?: Date;
 }
 
@@ -27,7 +27,7 @@ export interface SignupData {
   email: string;
   password: string;
   confirmPassword: string;
-  role?: 'user' | 'trainer';
+  role?: 'user';
 }
 
 export interface ApiResponse<T = any> {
@@ -105,8 +105,6 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Login error:', error);
-          
           // Return structured error response
           let message = 'Login failed. Please try again.';
           
@@ -150,8 +148,6 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Signup error:', error);
-          
           // Return structured error response
           let message = 'Registration failed. Please try again.';
           
@@ -178,8 +174,8 @@ export class AuthService {
     if (token) {
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
       this.http.post(`${this.apiUrl}/auth/logout`, {}, { headers }).subscribe({
-        next: () => console.log('Logout successful'),
-        error: (error) => console.error('Logout error:', error)
+        next: () => {}, // Silent logout
+        error: () => {} // Silent error handling
       });
     }
     
@@ -206,7 +202,6 @@ export class AuthService {
           return false;
         }),
         catchError(error => {
-          console.error('Token refresh error:', error);
           this.logout(); // Force logout on refresh failure
           return throwError(() => error);
         })
@@ -281,7 +276,6 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Profile update error:', error);
           const message = error.error?.message || 'Profile update failed. Please try again.';
           return throwError(() => ({ success: false, message }));
         })
@@ -315,7 +309,6 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Goals update error:', error);
           const message = error.error?.message || 'Goals update failed. Please try again.';
           return throwError(() => ({ success: false, message }));
         })
@@ -349,7 +342,6 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Get profile error:', error);
           return throwError(() => error);
         })
       );
@@ -364,8 +356,6 @@ export class AuthService {
         return response;
       }),
       catchError(error => {
-        console.error('Request password reset error:', error);
-        
         // Return structured error response
         let message = 'Failed to send reset email. Please try again.';
         
@@ -395,8 +385,6 @@ export class AuthService {
         return response;
       }),
       catchError(error => {
-        console.error('Verify reset token error:', error);
-        
         // Return structured error response
         let message = 'Invalid or expired reset token.';
         
@@ -426,8 +414,6 @@ export class AuthService {
         return response;
       }),
       catchError(error => {
-        console.error('Reset password error:', error);
-        
         // Return structured error response
         let message = 'Failed to reset password. Please try again.';
         

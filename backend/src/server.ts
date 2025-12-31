@@ -20,7 +20,6 @@ import workoutRoutes from './routes/workout';
 import progressRoutes from './routes/progress';
 import mealRoutes from './routes/meal';
 import foodRoutes from './routes/food';
-import adminRoutes from './routes/admin';
 
 class Server {
   private app: express.Application;
@@ -222,7 +221,6 @@ class Server {
     apiRouter.use('/progress', progressRoutes);
     apiRouter.use('/meals', mealRoutes);
     apiRouter.use('/foods', foodRoutes);
-    apiRouter.use('/admin', adminRoutes);
 
     // Mount API router
     this.app.use(`/api/${config.apiVersion}`, apiRouter);
@@ -294,13 +292,14 @@ class Server {
 
       // Start server
       this.server = this.app.listen(config.port, () => {
-        logger.info(`🚀 Server running on port ${config.port}`);
-        logger.info(`📱 Environment: ${config.nodeEnv}`);
-        logger.info(`🌐 API Base URL: http://localhost:${config.port}/api/${config.apiVersion}`);
-        logger.info(`💚 Health Check: http://localhost:${config.port}/health`);
-        
         if (config.nodeEnv === 'development') {
+          logger.info(`🚀 Server running on port ${config.port}`);
+          logger.info(`📱 Environment: ${config.nodeEnv}`);
+          logger.info(`🌐 API Base URL: http://localhost:${config.port}/api/${config.apiVersion}`);
+          logger.info(`💚 Health Check: http://localhost:${config.port}/health`);
           logger.info(`🔧 CORS Origin: ${config.corsOrigin}`);
+        } else {
+          logger.info(`Server running on port ${config.port}`);
         }
       });
 

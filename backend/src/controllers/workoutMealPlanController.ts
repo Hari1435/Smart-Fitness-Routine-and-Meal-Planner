@@ -157,7 +157,7 @@ export class WorkoutMealPlanController {
   });
 
   /**
-   * Get plans by goal (Admin/Trainer only)
+   * Get plans by goal (User only)
    */
   static getPlansByGoal = asyncHandler(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { goal } = req.params;
@@ -179,7 +179,7 @@ export class WorkoutMealPlanController {
   });
 
   /**
-   * Get plan statistics (Admin/Trainer only)
+   * Get plan statistics (User only)
    */
   static getPlanStatistics = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     // This would typically involve complex queries to get statistics

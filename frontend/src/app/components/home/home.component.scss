@@ -156,7 +156,6 @@
 .goals-section {
   padding: 80px 0;
   background: linear-gradient(135deg, #524e7d 0%, #25262c 100%);
-  
   .section-title {
     text-align: center;
     font-size: 2.5rem;
@@ -171,7 +170,7 @@
     gap: 30px;
     
     .goal-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(4, 0, 255, 0.1);
       border-radius: 20px;
       padding: 40px 30px;
       text-align: center;
@@ -213,8 +212,8 @@
 // CTA Section
 .cta-section {
   padding: 80px 0;
-  background-color: #0f5444;
-  color: white;
+  background-color: #c0dacd;
+  color: rgb(0, 0, 0);
   text-align: center;
   
   .cta-content {

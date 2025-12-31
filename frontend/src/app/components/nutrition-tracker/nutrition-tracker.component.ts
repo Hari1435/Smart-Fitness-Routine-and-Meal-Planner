@@ -91,7 +91,7 @@ export class NutritionTrackerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/unauthorized']);
       return;
     }
 
@@ -118,7 +118,7 @@ export class NutritionTrackerComponent implements OnInit, OnDestroy {
       this.snackBar.open('Please log in to view nutrition data', 'Login', {
         duration: 5000
       }).onAction().subscribe(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/unauthorized']);
       });
       this.loading = false;
       return;
@@ -141,7 +141,6 @@ export class NutritionTrackerComponent implements OnInit, OnDestroy {
               setTimeout(() => this.createCharts(), 100);
             },
             error: (error) => {
-              console.error('Error loading meal progress:', error);
               this.calculateNutritionStats();
               this.loading = false;
               setTimeout(() => this.createCharts(), 100);
@@ -156,13 +155,11 @@ export class NutritionTrackerComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error loading nutrition data:', error);
-        
         if (error.status === 401) {
           this.snackBar.open('Please log in to view nutrition data', 'Login', {
             duration: 5000
           }).onAction().subscribe(() => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['/unauthorized']);
           });
         } else {
           // Fallback to mock data if API fails

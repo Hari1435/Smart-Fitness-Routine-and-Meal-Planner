@@ -125,7 +125,7 @@ import { MealService, USDAFood, USDASearchResult, Food } from '../../services/me
           <!-- API Status -->
           <div class="api-status" *ngIf="!apiKeyValid">
             <mat-icon color="warn">warning</mat-icon>
-            <span>USDA API key not configured. Please contact administrator.</span>
+            <span>USDA API key not configured. Please contact support.</span>
           </div>
         </mat-card-content>
       </mat-card>
@@ -314,14 +314,13 @@ export class FoodSearchComponent implements OnInit {
       next: (response: any) => {
         this.apiKeyValid = response.data?.apiKeyValid || false;
         if (!this.apiKeyValid) {
-          this.snackBar.open('USDA API not configured. Contact administrator.', 'Close', {
+          this.snackBar.open('USDA API not configured. Contact support.', 'Close', {
             duration: 5000,
             panelClass: ['warning-snackbar']
           });
         }
       },
       error: (error: any) => {
-        console.error('API validation error:', error);
         this.apiKeyValid = false;
       }
     });
@@ -339,7 +338,6 @@ export class FoodSearchComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error: any) => {
-        console.error('Search error:', error);
         this.isLoading = false;
         this.snackBar.open('Search failed. Please try again.', 'Close', {
           duration: 3000,
@@ -361,7 +359,6 @@ export class FoodSearchComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error: any) => {
-        console.error('Page load error:', error);
         this.isLoading = false;
         this.snackBar.open('Failed to load page. Please try again.', 'Close', {
           duration: 3000

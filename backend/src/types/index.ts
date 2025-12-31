@@ -11,7 +11,7 @@ export interface User {
   height?: number;
   weight?: number;
   goal?: 'weight_loss' | 'muscle_gain' | 'maintenance';
-  role: 'user' | 'trainer' | 'admin';
+  role: 'user';
   created_at: Date;
 }
 
@@ -19,7 +19,7 @@ export interface CreateUserRequest {
   name: string;
   email: string;
   password: string;
-  role?: 'user' | 'trainer';
+  role?: 'user';
 }
 
 export interface LoginRequest {
