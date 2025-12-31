@@ -1,0 +1,339 @@
+<!-- Meal Planner Page -->
+<div class="meal-planner-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">restaurant</mat-icon>
+          Meal Planner
+        </h1>
+        <p class="page-subtitle">Plan and track your daily nutrition</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="navigateToNutrition()" class="nutrition-btn">
+          <mat-icon>analytics</mat-icon>
+          Nutrition Tracker
+        </button>
+        <button mat-raised-button (click)="generateNewMealPlan()" [disabled]="loading" class="generate-btn">
+          <mat-icon>refresh</mat-icon>
+          Generate New Plan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading your meal plan...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading" class="main-content">
+    <!-- Week Overview -->
+    <div class="week-overview">
+      <h2 class="section-title">Weekly Overview</h2>
+      <div class="week-calendar">
+        <div 
+          *ngFor="let date of weekDates" 
+          class="day-card"
+          [class.selected]="isSelectedDate(date)"
+          [class.today]="isToday(date)"
+          (click)="selectDate(date)"
+        >
+          <div class="day-header">
+            <h3 class="day-name">{{ formatDate(date) }}</h3>
+            <mat-icon *ngIf="isToday(date)" class="today-icon">today</mat-icon>
+          </div>
+          
+          <div class="day-preview">
+            <div class="meal-indicators">
+              <div 
+                *ngFor="let type of mealTypes" 
+                class="meal-indicator"
+                [style.background-color]="getMealTypeColor(type)"
+              ></div>
+            </div>
+            <span class="day-status">Planned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Overview -->
+    <div *ngIf="currentMealPlan && nutritionProgress" class="daily-overview">
+      <div class="overview-header">
+        <h2 class="day-title">
+          {{ selectedDate | date:'fullDate' }}
+          <mat-chip-set class="day-chips">
+            <mat-chip *ngIf="isToday(selectedDate)" color="primary" selected>Today</mat-chip>
+            <mat-chip 
+              [style.background-color]="getCalorieProgressColor()"
+              selected
+            >
+              {{ nutritionProgress.consumed.calories }}/{{ nutritionProgress.targets.calories }} cal
+            </mat-chip>
+          </mat-chip-set>
+        </h2>
+        
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stat-item">
+            <mat-icon class="stat-icon">restaurant</mat-icon>
+            <div class="stat-content">
+              <span class="stat-value">{{ getConsumedMealsCount() }}/{{ getTotalMealsCount() }}</span>
+              <span class="stat-label">Meals</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <mat-icon class="stat-icon">local_fire_department</mat-icon>
+            <div class="stat-content">
+              <span class="stat-value">{{ nutritionProgress.consumed.calories }}</span>
+              <span class="stat-label">Calories</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <mat-icon class="stat-icon">fitness_center</mat-icon>
+            <div class="stat-content">
+              <span class="stat-value">{{ nutritionProgress.consumed.protein }}g</span>
+              <span class="stat-label">Protein</span>
+            </div>
+          </div>
+          
+          <div class="stat-item">
+            <mat-icon class="stat-icon">grain</mat-icon>
+            <div class="stat-content">
+              <span class="stat-value">{{ nutritionProgress.consumed.carbs }}g</span>
+              <span class="stat-label">Carbs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutrition Progress Bar -->
+      <div class="nutrition-progress">
+        <div class="progress-header">
+          <span class="progress-title">Daily Nutrition Progress</span>
+          <span class="progress-percentage">{{ getCompletionPercentage() }}% Complete</span>
+        </div>
+        <mat-progress-bar 
+          mode="determinate" 
+          [value]="getCompletionPercentage()"
+          class="overall-progress">
+        </mat-progress-bar>
+      </div>
+    </div>
+
+    <!-- Meals by Type -->
+    <div class="meals-section">
+      <div *ngFor="let mealType of mealTypes" class="meal-type-section">
+        <div class="meal-type-header">
+          <h3 class="meal-type-title">
+            <mat-icon [style.color]="getMealTypeColor(mealType)">{{ getMealTypeIcon(mealType) }}</mat-icon>
+            {{ mealType | titlecase }}
+            <mat-badge 
+              [matBadge]="getMealsByType(mealType).length" 
+              [hidden]="getMealsByType(mealType).length === 0"
+              color="primary">
+            </mat-badge>
+          </h3>
+          <button mat-icon-button (click)="addCustomMeal()" class="add-meal-btn">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
+        <div class="meals-grid">
+          <mat-card 
+            *ngFor="let meal of getMealsByType(mealType); trackBy: trackByMealId" 
+            class="meal-card"
+            [class.consumed]="meal.consumed"
+          >
+            <mat-card-header class="meal-header">
+              <div class="meal-title-section">
+                <mat-card-title class="meal-name">{{ meal.name }}</mat-card-title>
+                <div class="meal-stats">
+                  <span class="calorie-count">{{ meal.calories }} cal</span>
+                  <span class="macro-info">P: {{ meal.protein }}g | C: {{ meal.carbs }}g | F: {{ meal.fat }}g</span>
+                </div>
+              </div>
+              <div class="meal-actions">
+                <button mat-icon-button (click)="editMeal(meal)" class="edit-btn">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  (click)="toggleMealConsumption(meal)"
+                  [color]="meal.consumed ? 'primary' : ''"
+                  class="consumption-btn"
+                >
+                  <mat-icon>{{ meal.consumed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                </button>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content class="meal-content">
+              <!-- Nutrition Info -->
+              <div class="nutrition-info">
+                <div class="nutrition-item">
+                  <mat-icon class="nutrition-icon">local_fire_department</mat-icon>
+                  <span class="nutrition-value">{{ meal.calories }} cal</span>
+                </div>
+                <div class="nutrition-item">
+                  <mat-icon class="nutrition-icon">fitness_center</mat-icon>
+                  <span class="nutrition-value">{{ meal.protein }}g protein</span>
+                </div>
+                <div class="nutrition-item">
+                  <mat-icon class="nutrition-icon">grain</mat-icon>
+                  <span class="nutrition-value">{{ meal.carbs }}g carbs</span>
+                </div>
+                <div class="nutrition-item">
+                  <mat-icon class="nutrition-icon">opacity</mat-icon>
+                  <span class="nutrition-value">{{ meal.fat }}g fat</span>
+                </div>
+              </div>
+
+              <!-- Food Items -->
+              <div class="food-items">
+                <h4 class="food-items-title">
+                  <mat-icon>list</mat-icon>
+                  Ingredients ({{ meal.foods.length }})
+                </h4>
+                <div class="food-list">
+                  <div *ngFor="let food of meal.foods" class="food-item">
+                    <span class="food-name">{{ food.name }}</span>
+                    <span class="food-quantity">{{ food.quantity }}{{ food.unit }}</span>
+                    <span class="food-calories">{{ food.calories }} cal</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Consumption Status -->
+              <div *ngIf="meal.consumed && meal.consumed_at" class="consumption-status">
+                <mat-icon class="status-icon">check_circle</mat-icon>
+                <span class="status-text">
+                  Consumed at {{ meal.consumed_at | date:'shortTime' }}
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Empty State for Meal Type -->
+          <div *ngIf="getMealsByType(mealType).length === 0" class="empty-meal-state">
+            <mat-icon class="empty-icon">restaurant_menu</mat-icon>
+            <p class="empty-text">No {{ mealType }} planned</p>
+            <button mat-raised-button color="primary" (click)="addCustomMeal()" class="add-meal-btn">
+              <mat-icon>add</mat-icon>
+              Add {{ mealType | titlecase }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Summary -->
+    <div *ngIf="nutritionProgress" class="daily-summary">
+      <h2 class="section-title">Daily Nutrition Summary</h2>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <div class="summary-header">
+                <mat-icon class="summary-icon">local_fire_department</mat-icon>
+                <span class="summary-label">Calories</span>
+              </div>
+              <div class="summary-progress">
+                <div class="summary-values">
+                  <span class="consumed">{{ nutritionProgress.consumed.calories }}</span>
+                  <span class="separator">/</span>
+                  <span class="target">{{ nutritionProgress.targets.calories }}</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="nutritionProgress.percentages.calories"
+                  [color]="getNutrientProgressColor(nutritionProgress.percentages.calories) === '#4CAF50' ? 'primary' : 'warn'">
+                </mat-progress-bar>
+                <span class="percentage">{{ nutritionProgress.percentages.calories }}%</span>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-header">
+                <mat-icon class="summary-icon">fitness_center</mat-icon>
+                <span class="summary-label">Protein</span>
+              </div>
+              <div class="summary-progress">
+                <div class="summary-values">
+                  <span class="consumed">{{ nutritionProgress.consumed.protein }}g</span>
+                  <span class="separator">/</span>
+                  <span class="target">{{ nutritionProgress.targets.protein }}g</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="nutritionProgress.percentages.protein"
+                  [color]="getNutrientProgressColor(nutritionProgress.percentages.protein) === '#4CAF50' ? 'primary' : 'warn'">
+                </mat-progress-bar>
+                <span class="percentage">{{ nutritionProgress.percentages.protein }}%</span>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-header">
+                <mat-icon class="summary-icon">grain</mat-icon>
+                <span class="summary-label">Carbs</span>
+              </div>
+              <div class="summary-progress">
+                <div class="summary-values">
+                  <span class="consumed">{{ nutritionProgress.consumed.carbs }}g</span>
+                  <span class="separator">/</span>
+                  <span class="target">{{ nutritionProgress.targets.carbs }}g</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="nutritionProgress.percentages.carbs"
+                  [color]="getNutrientProgressColor(nutritionProgress.percentages.carbs) === '#4CAF50' ? 'primary' : 'warn'">
+                </mat-progress-bar>
+                <span class="percentage">{{ nutritionProgress.percentages.carbs }}%</span>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-header">
+                <mat-icon class="summary-icon">opacity</mat-icon>
+                <span class="summary-label">Fat</span>
+              </div>
+              <div class="summary-progress">
+                <div class="summary-values">
+                  <span class="consumed">{{ nutritionProgress.consumed.fat }}g</span>
+                  <span class="separator">/</span>
+                  <span class="target">{{ nutritionProgress.targets.fat }}g</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="nutritionProgress.percentages.fat"
+                  [color]="getNutrientProgressColor(nutritionProgress.percentages.fat) === '#4CAF50' ? 'primary' : 'warn'">
+                </mat-progress-bar>
+                <span class="percentage">{{ nutritionProgress.percentages.fat }}%</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- No Plan State -->
+  <div *ngIf="!currentMealPlan && !loading" class="no-plan-state">
+    <div class="no-plan-content">
+      <mat-icon class="no-plan-icon">restaurant_menu</mat-icon>
+      <h3 class="no-plan-title">No meal plan for {{ selectedDate | date:'mediumDate' }}</h3>
+      <p class="no-plan-text">Generate a personalized meal plan based on your fitness goals.</p>
+      <button mat-raised-button color="primary" (click)="generateNewMealPlan()" class="generate-plan-btn">
+        <mat-icon>add</mat-icon>
+        Generate Meal Plan
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,379 @@
+<!-- Nutrition Tracker Page -->
+<div class="nutrition-tracker-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">analytics</mat-icon>
+          Nutrition Tracker
+        </h1>
+        <p class="page-subtitle">Track calories consumed vs target and monitor your nutrition goals</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="navigateToMealPlanner()" class="meals-btn">
+          <mat-icon>restaurant</mat-icon>
+          Meal Planner
+        </button>
+        <button mat-raised-button (click)="refreshData()" [disabled]="loading" class="refresh-btn">
+          <mat-icon>refresh</mat-icon>
+          Refresh Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Loading your nutrition data...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading" class="main-content">
+    <!-- Today's Progress Overview -->
+    <div *ngIf="todayProgress" class="today-overview">
+      <h2 class="section-title">Today's Nutrition Progress</h2>
+      <div class="progress-cards">
+        <!-- Calories Card -->
+        <mat-card class="progress-card calories-card">
+          <mat-card-header>
+            <mat-icon class="card-icon">local_fire_department</mat-icon>
+            <div class="card-header">
+              <mat-card-title>Calories</mat-card-title>
+              <mat-card-subtitle>Daily intake vs target</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="progress-values">
+              <span class="consumed">{{ todayProgress.consumed.calories }}</span>
+              <span class="separator">/</span>
+              <span class="target">{{ todayProgress.targets.calories }}</span>
+              <span class="unit">cal</span>
+            </div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="todayProgress.percentages.calories"
+              [color]="getProgressColor(todayProgress.percentages.calories) === '#4CAF50' ? 'primary' : 'warn'"
+              class="progress-bar">
+            </mat-progress-bar>
+            <div class="progress-details">
+              <span class="percentage">{{ todayProgress.percentages.calories }}%</span>
+              <span class="remaining">{{ todayProgress.remaining.calories }} cal remaining</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Protein Card -->
+        <mat-card class="progress-card protein-card">
+          <mat-card-header>
+            <mat-icon class="card-icon">fitness_center</mat-icon>
+            <div class="card-header">
+              <mat-card-title>Protein</mat-card-title>
+              <mat-card-subtitle>Muscle building fuel</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="progress-values">
+              <span class="consumed">{{ todayProgress.consumed.protein }}</span>
+              <span class="separator">/</span>
+              <span class="target">{{ todayProgress.targets.protein }}</span>
+              <span class="unit">g</span>
+            </div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="todayProgress.percentages.protein"
+              [color]="getProgressColor(todayProgress.percentages.protein) === '#4CAF50' ? 'primary' : 'warn'"
+              class="progress-bar">
+            </mat-progress-bar>
+            <div class="progress-details">
+              <span class="percentage">{{ todayProgress.percentages.protein }}%</span>
+              <span class="remaining">{{ todayProgress.remaining.protein }}g remaining</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Carbs Card -->
+        <mat-card class="progress-card carbs-card">
+          <mat-card-header>
+            <mat-icon class="card-icon">grain</mat-icon>
+            <div class="card-header">
+              <mat-card-title>Carbohydrates</mat-card-title>
+              <mat-card-subtitle>Energy source</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="progress-values">
+              <span class="consumed">{{ todayProgress.consumed.carbs }}</span>
+              <span class="separator">/</span>
+              <span class="target">{{ todayProgress.targets.carbs }}</span>
+              <span class="unit">g</span>
+            </div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="todayProgress.percentages.carbs"
+              [color]="getProgressColor(todayProgress.percentages.carbs) === '#4CAF50' ? 'primary' : 'warn'"
+              class="progress-bar">
+            </mat-progress-bar>
+            <div class="progress-details">
+              <span class="percentage">{{ todayProgress.percentages.carbs }}%</span>
+              <span class="remaining">{{ todayProgress.remaining.carbs }}g remaining</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Fat Card -->
+        <mat-card class="progress-card fat-card">
+          <mat-card-header>
+            <mat-icon class="card-icon">opacity</mat-icon>
+            <div class="card-header">
+              <mat-card-title>Fats</mat-card-title>
+              <mat-card-subtitle>Essential nutrients</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="progress-values">
+              <span class="consumed">{{ todayProgress.consumed.fat | number:'1.0-1' }}</span>
+              <span class="separator">/</span>
+              <span class="target">{{ todayProgress.targets.fat | number:'1.0-1' }}</span>
+              <span class="unit">g</span>
+            </div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="todayProgress.percentages.fat"
+              [color]="getProgressColor(todayProgress.percentages.fat) === '#4CAF50' ? 'primary' : 'warn'"
+              class="progress-bar">
+            </mat-progress-bar>
+            <div class="progress-details">
+              <span class="percentage">{{ todayProgress.percentages.fat }}%</span>
+              <span class="remaining">{{ todayProgress.remaining.fat | number:'1.0-1' }}g remaining</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="stats-overview">
+      <h2 class="section-title">Weekly Statistics</h2>
+      <div class="stats-grid">
+        <!-- Average Intake -->
+        <mat-card class="stat-card intake-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">restaurant</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Average Daily Intake</mat-card-title>
+              <mat-card-subtitle>This week's average</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ nutritionStats.averageCalories }}</div>
+            <div class="stat-unit">calories/day</div>
+            <div class="stat-breakdown">
+              <span>P: {{ nutritionStats.averageProtein }}g</span>
+              <span>C: {{ nutritionStats.averageCarbs }}g</span>
+              <span>F: {{ nutritionStats.averageFat }}g</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Goal Achievement -->
+        <mat-card class="stat-card goals-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">emoji_events</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Goal Achievement</mat-card-title>
+              <mat-card-subtitle>Days on track</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ nutritionStats.calorieGoalDays }}/7</div>
+            <div class="stat-unit">calorie goals met</div>
+            <div class="stat-breakdown">
+              <span>Protein goals: {{ nutritionStats.proteinGoalDays }}/7</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Current Streak -->
+        <mat-card class="stat-card streak-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">local_fire_department</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Current Streak</mat-card-title>
+              <mat-card-subtitle>Consecutive days</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ nutritionStats.currentStreak }}</div>
+            <div class="stat-unit">days in a row</div>
+            <div class="streak-indicator">
+              <mat-icon *ngFor="let day of getStreakArray(nutritionStats.currentStreak)" 
+                        class="streak-flame">local_fire_department</mat-icon>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Meal Completion -->
+        <mat-card class="stat-card meals-card">
+          <mat-card-header>
+            <mat-icon class="stat-icon">check_circle</mat-icon>
+            <div class="stat-header">
+              <mat-card-title>Meal Completion</mat-card-title>
+              <mat-card-subtitle>This week's tracking</mat-card-subtitle>
+            </div>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stat-value">{{ nutritionStats.totalMealsConsumed }}/{{ nutritionStats.totalMealsPlanned }}</div>
+            <div class="stat-unit">meals tracked</div>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="(nutritionStats.totalMealsConsumed / nutritionStats.totalMealsPlanned) * 100"
+              class="meal-progress">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <h2 class="section-title">Visual Analytics</h2>
+      <div class="charts-grid">
+        <!-- Today's Calorie Breakdown -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>donut_large</mat-icon>
+              Today's Calorie Progress
+            </mat-card-title>
+            <mat-card-subtitle>Consumed vs remaining calories</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #calorieChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Macronutrient Comparison -->
+        <mat-card class="chart-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>bar_chart</mat-icon>
+              Macronutrient Breakdown
+            </mat-card-title>
+            <mat-card-subtitle>Today's intake vs targets</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #macroChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Weekly Calorie Trend -->
+        <mat-card class="chart-card full-width">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>show_chart</mat-icon>
+              Weekly Calorie Trend
+            </mat-card-title>
+            <mat-card-subtitle>Daily calorie consumption vs targets</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="chart-container">
+              <canvas #weeklyChart></canvas>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div *ngIf="weeklyNutritionSummary" class="weekly-summary">
+      <h2 class="section-title">This Week's Nutrition Summary</h2>
+      <mat-card class="summary-card">
+        <mat-card-content>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <mat-icon class="summary-icon">calendar_today</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Total Days Tracked</div>
+                <div class="summary-value">{{ weeklyNutritionSummary.totalDays }}</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">local_fire_department</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Average Calories</div>
+                <div class="summary-value">{{ weeklyNutritionSummary.averageCalories | number:'1.0-0' }}</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">fitness_center</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Average Protein</div>
+                <div class="summary-value">{{ weeklyNutritionSummary.averageProtein | number:'1.0-0' }}g</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">emoji_events</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Goal Achievement</div>
+                <div class="summary-value">{{ weeklyNutritionSummary.calorieGoalDays }}/7 days</div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <mat-icon class="summary-icon">trending_up</mat-icon>
+              <div class="summary-content">
+                <div class="summary-label">Current Streak</div>
+                <div class="summary-value">{{ weeklyNutritionSummary.streak }} days</div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Motivational Section -->
+    <div class="motivation-section">
+      <mat-card class="motivation-card">
+        <mat-card-content>
+          <div class="motivation-content">
+            <mat-icon class="motivation-icon">psychology</mat-icon>
+            <div class="motivation-text">
+              <h3 class="motivation-title">Keep Up the Great Work!</h3>
+              <p class="motivation-message" *ngIf="nutritionStats.calorieGoalDays >= 5">
+                Outstanding nutrition tracking! You're consistently meeting your goals and building healthy habits.
+              </p>
+              <p class="motivation-message" *ngIf="nutritionStats.calorieGoalDays >= 3 && nutritionStats.calorieGoalDays < 5">
+                Good progress on your nutrition goals! Stay consistent and you'll see great results.
+              </p>
+              <p class="motivation-message" *ngIf="nutritionStats.calorieGoalDays < 3">
+                Every meal tracked is a step forward! Focus on consistency and celebrate small wins along the way.
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- No Data State -->
+  <div *ngIf="!loading && !todayProgress" class="no-data-state">
+    <div class="no-data-content">
+      <mat-icon class="no-data-icon">analytics</mat-icon>
+      <h3 class="no-data-title">No Nutrition Data Yet</h3>
+      <p class="no-data-text">Start tracking your meals to see detailed nutrition analytics and progress.</p>
+      <button mat-raised-button color="primary" (click)="navigateToMealPlanner()" class="start-btn">
+        <mat-icon>restaurant</mat-icon>
+        Start Meal Planning
+      </button>
+    </div>
+  </div>
+</div>

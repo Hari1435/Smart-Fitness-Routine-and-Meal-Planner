@@ -1,0 +1,153 @@
+<mat-toolbar class="navbar">
+  <div class="navbar-container">
+    <div class="logo-section" routerLink="/home">
+      <mat-icon class="logo-icon">fitness_center</mat-icon>
+      <span class="logo-text">FitPlanner</span>
+    </div>
+    
+    <!-- Mobile Menu Button -->
+    <button mat-icon-button class="mobile-menu-button mobile-only" (click)="toggleMobileMenu()">
+      <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+    
+    <!-- Desktop Navigation -->
+    <nav class="nav-links desktop-only">
+      <a mat-button routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>
+      
+      <!-- User routes - available to all authenticated users -->
+      <ng-container *ngIf="isAuthenticated">
+        <a mat-button routerLink="/workouts" routerLinkActive="active" class="nav-link">Workouts</a>
+        <a mat-button routerLink="/meals" routerLinkActive="active" class="nav-link">Meal Plans</a>
+        <a mat-button routerLink="/nutrition" routerLinkActive="active" class="nav-link">Nutrition Tracker</a>
+        <a mat-button routerLink="/progress" routerLinkActive="active" class="nav-link">Workout Progress</a>
+        <a mat-button routerLink="/food-search" routerLinkActive="active" class="nav-link">Food Search</a>
+      </ng-container>
+      
+      <!-- Trainer routes - available to trainers and admins -->
+      <ng-container *ngIf="hasRole('trainer') || hasRole('admin')">
+        <a mat-button routerLink="/trainer-dashboard" routerLinkActive="active" class="nav-link trainer-link">
+          <mat-icon>supervisor_account</mat-icon>
+          Trainer
+        </a>
+      </ng-container>
+      
+      <!-- Admin routes - available to admins only -->
+      <ng-container *ngIf="hasRole('admin')">
+        <a mat-button routerLink="/admin/users" routerLinkActive="active" class="nav-link admin-link">
+          <mat-icon>admin_panel_settings</mat-icon>
+          Admin
+        </a>
+      </ng-container>
+    </nav>
+    
+    <!-- Desktop Auth Buttons -->
+    <div class="auth-buttons desktop-only">
+      <!-- Show when NOT authenticated -->
+      <ng-container *ngIf="!isAuthenticated">
+        <button mat-button routerLink="/login" class="login-btn">Login</button>
+        <button mat-raised-button color="primary" routerLink="/signup" class="signup-btn">Sign Up</button>
+      </ng-container>
+      
+      <!-- Show when authenticated -->
+      <ng-container *ngIf="isAuthenticated">
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+          <div class="user-avatar">{{ getUserInitials() }}</div>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item routerLink="/profile">
+            <mat-icon>person</mat-icon>
+            <span>Profile</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu Backdrop -->
+  <div class="mobile-backdrop" 
+       [class.mobile-backdrop-open]="isMobileMenuOpen" 
+       (click)="closeMobileMenu()"></div>
+  
+    <!-- Mobile Navigation Menu -->
+  <div class="mobile-nav" [class.mobile-nav-open]="isMobileMenuOpen">
+    <nav class="mobile-nav-links">
+      <a mat-button routerLink="/home" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      
+      <!-- User routes - available to all authenticated users -->
+      <ng-container *ngIf="isAuthenticated">
+        <a mat-button routerLink="/workouts" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>fitness_center</mat-icon>
+          <span>Workouts</span>
+        </a>
+        <a mat-button routerLink="/meals" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>restaurant</mat-icon>
+          <span>Meal Plans</span>
+        </a>
+        <a mat-button routerLink="/nutrition" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>analytics</mat-icon>
+          <span>Nutrition</span>
+        </a>
+        <a mat-button routerLink="/progress" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>trending_up</mat-icon>
+          <span>Progress</span>
+        </a>
+        <a mat-button routerLink="/food-search" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>search</mat-icon>
+          <span>Food Search</span>
+        </a>
+        <a mat-button routerLink="/profile" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </a>
+      </ng-container>
+      
+      <!-- Trainer routes - available to trainers and admins -->
+      <ng-container *ngIf="hasRole('trainer') || hasRole('admin')">
+        <a mat-button routerLink="/trainer-dashboard" routerLinkActive="active" class="mobile-nav-link trainer-link" (click)="closeMobileMenu()">
+          <mat-icon>supervisor_account</mat-icon>
+          <span>Trainer Dashboard</span>
+        </a>
+      </ng-container>
+      
+      <!-- Admin routes - available to admins only -->
+      <ng-container *ngIf="hasRole('admin')">
+        <a mat-button routerLink="/admin/users" routerLinkActive="active" class="mobile-nav-link admin-link" (click)="closeMobileMenu()">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>User Management</span>
+        </a>
+      </ng-container>
+    </nav>
+    
+    <!-- Mobile Auth Buttons -->
+    <div class="mobile-auth-buttons">
+      <!-- Show when NOT authenticated -->
+      <ng-container *ngIf="!isAuthenticated">
+        <button mat-button routerLink="/login" class="mobile-login-btn" (click)="closeMobileMenu()">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        <button mat-raised-button color="primary" routerLink="/signup" class="mobile-signup-btn" (click)="closeMobileMenu()">
+          <mat-icon>person_add</mat-icon>
+          <span>Sign Up</span>
+        </button>
+      </ng-container>
+      
+      <!-- Show when authenticated -->
+      <ng-container *ngIf="isAuthenticated">
+        <button mat-button class="mobile-logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</mat-toolbar>

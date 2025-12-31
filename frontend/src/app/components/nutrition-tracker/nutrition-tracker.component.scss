@@ -1,0 +1,633 @@
+// Nutrition Tracker Component Styles
+.nutrition-tracker-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  
+  // Header Section
+  .header-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem 0;
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      
+      .title-section {
+        .page-title {
+          color: white;
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          .title-icon {
+            font-size: 2.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+          }
+        }
+        
+        .page-subtitle {
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 1.1rem;
+          margin: 0.5rem 0 0 0;
+        }
+      }
+      
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+        
+        .meals-btn, .refresh-btn {
+          padding: 0.75rem 1.5rem;
+          font-weight: 600;
+          border-radius: 25px;
+          text-transform: none;
+          
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+        
+        .meals-btn {
+          background: linear-gradient(45deg, #4CAF50, #45a049);
+          color: white;
+        }
+        
+        .refresh-btn {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+        }
+      }
+    }
+  }
+  
+  // Loading State
+  .loading-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    text-align: center;
+    color: white;
+    
+    mat-progress-bar {
+      margin-bottom: 1rem;
+      border-radius: 4px;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+  }
+  
+  // Main Content
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    
+    .section-title {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    // Today's Progress Overview
+    .today-overview {
+      margin-bottom: 3rem;
+      
+      .progress-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        
+        .progress-card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 15px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+          
+          &.calories-card {
+            border-left: 4px solid #FF9800;
+          }
+          
+          &.protein-card {
+            border-left: 4px solid #E91E63;
+          }
+          
+          &.carbs-card {
+            border-left: 4px solid #2196F3;
+          }
+          
+          &.fat-card {
+            border-left: 4px solid #9C27B0;
+          }
+          
+          mat-card-header {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            
+            .card-icon {
+              font-size: 2rem;
+              width: 2rem;
+              height: 2rem;
+              color: #667eea;
+            }
+            
+            .card-header {
+              mat-card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.25rem;
+              }
+              
+              mat-card-subtitle {
+                color: #666;
+                font-size: 0.9rem;
+              }
+            }
+          }
+          
+          mat-card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            
+            .progress-values {
+              display: flex;
+              align-items: baseline;
+              gap: 0.25rem;
+              margin-bottom: 1rem;
+              
+              .consumed {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #333;
+              }
+              
+              .separator {
+                font-size: 1.5rem;
+                color: #666;
+              }
+              
+              .target {
+                font-size: 1.2rem;
+                color: #666;
+              }
+              
+              .unit {
+                font-size: 0.9rem;
+                color: #999;
+                margin-left: 0.25rem;
+              }
+            }
+            
+            .progress-bar {
+              height: 8px;
+              border-radius: 4px;
+              margin-bottom: 0.75rem;
+            }
+            
+            .progress-details {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              
+              .percentage {
+                font-weight: 600;
+                color: #333;
+              }
+              
+              .remaining {
+                font-size: 0.85rem;
+                color: #666;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Statistics Overview
+    .stats-overview {
+      margin-bottom: 3rem;
+      
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        
+        .stat-card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 15px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          }
+          
+          &.intake-card {
+            border-left: 4px solid #4CAF50;
+          }
+          
+          &.goals-card {
+            border-left: 4px solid #FF9800;
+          }
+          
+          &.streak-card {
+            border-left: 4px solid #F44336;
+          }
+          
+          &.meals-card {
+            border-left: 4px solid #2196F3;
+          }
+          
+          mat-card-header {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            
+            .stat-icon {
+              font-size: 2rem;
+              width: 2rem;
+              height: 2rem;
+              color: #667eea;
+            }
+            
+            .stat-header {
+              mat-card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.25rem;
+              }
+              
+              mat-card-subtitle {
+                color: #666;
+                font-size: 0.9rem;
+              }
+            }
+          }
+          
+          mat-card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            
+            .stat-value {
+              font-size: 2.2rem;
+              font-weight: 700;
+              color: #667eea;
+              margin-bottom: 0.25rem;
+            }
+            
+            .stat-unit {
+              color: #666;
+              font-size: 0.9rem;
+              margin-bottom: 0.75rem;
+            }
+            
+            .stat-breakdown {
+              display: flex;
+              gap: 0.75rem;
+              flex-wrap: wrap;
+              
+              span {
+                background: rgba(102, 126, 234, 0.1);
+                padding: 0.25rem 0.5rem;
+                border-radius: 10px;
+                font-size: 0.8rem;
+                color: #333;
+              }
+            }
+            
+            .streak-indicator {
+              display: flex;
+              gap: 0.25rem;
+              margin-top: 0.5rem;
+              
+              .streak-flame {
+                color: #FF9800;
+                font-size: 1.2rem;
+                animation: flicker 1.5s ease-in-out infinite alternate;
+              }
+            }
+            
+            .meal-progress {
+              height: 6px;
+              border-radius: 3px;
+              margin-top: 0.5rem;
+            }
+          }
+        }
+      }
+    }
+    
+    // Charts Section
+    .charts-section {
+      margin-bottom: 3rem;
+      
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        
+        .chart-card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 15px;
+          overflow: hidden;
+          
+          &.full-width {
+            grid-column: 1 / -1;
+          }
+          
+          mat-card-header {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            
+            mat-card-title {
+              font-size: 1.2rem;
+              font-weight: 600;
+              color: #333;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              
+              mat-icon {
+                color: #667eea;
+              }
+            }
+            
+            mat-card-subtitle {
+              color: #666;
+              font-size: 0.9rem;
+              margin-top: 0.25rem;
+            }
+          }
+          
+          mat-card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            
+            .chart-container {
+              height: 300px;
+              position: relative;
+              
+              canvas {
+                max-height: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Weekly Summary
+    .weekly-summary {
+      margin-bottom: 3rem;
+      
+      .summary-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        
+        mat-card-content {
+          padding: 2rem;
+          
+          .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            
+            .summary-item {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              
+              .summary-icon {
+                font-size: 2rem;
+                width: 2rem;
+                height: 2rem;
+                color: #667eea;
+                background: rgba(102, 126, 234, 0.1);
+                border-radius: 50%;
+                padding: 0.5rem;
+              }
+              
+              .summary-content {
+                .summary-label {
+                  color: #666;
+                  font-size: 0.9rem;
+                  margin-bottom: 0.25rem;
+                }
+                
+                .summary-value {
+                  font-size: 1.5rem;
+                  font-weight: 600;
+                  color: #333;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Motivation Section
+    .motivation-section {
+      .motivation-card {
+        background: linear-gradient(45deg, rgba(76, 175, 80, 0.9), rgba(69, 160, 73, 0.9));
+        border-radius: 15px;
+        color: white;
+        
+        mat-card-content {
+          padding: 2rem;
+          
+          .motivation-content {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            
+            .motivation-icon {
+              font-size: 3rem;
+              width: 3rem;
+              height: 3rem;
+              opacity: 0.8;
+            }
+            
+            .motivation-text {
+              flex: 1;
+              
+              .motivation-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+              }
+              
+              .motivation-message {
+                font-size: 1rem;
+                line-height: 1.5;
+                opacity: 0.9;
+                margin: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // No Data State
+  .no-data-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    
+    .no-data-content {
+      text-align: center;
+      color: white;
+      
+      .no-data-icon {
+        font-size: 4rem;
+        width: 4rem;
+        height: 4rem;
+        opacity: 0.6;
+        margin-bottom: 1rem;
+      }
+      
+      .no-data-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      
+      .no-data-text {
+        opacity: 0.8;
+        margin-bottom: 2rem;
+        max-width: 400px;
+      }
+      
+      .start-btn {
+        background: linear-gradient(45deg, #4CAF50, #45a049);
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        
+        mat-icon {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .nutrition-tracker-container {
+    .header-section .header-content {
+      flex-direction: column;
+      text-align: center;
+      
+      .header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+    
+    .main-content {
+      padding: 1rem;
+      
+      .today-overview .progress-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-overview .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .charts-section .charts-grid {
+        grid-template-columns: 1fr;
+        
+        .chart-card .chart-container {
+          height: 250px;
+        }
+      }
+      
+      .weekly-summary .summary-card mat-card-content {
+        padding: 1.5rem;
+        
+        .summary-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+      }
+      
+      .motivation-section .motivation-card mat-card-content {
+        padding: 1.5rem;
+        
+        .motivation-content {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .nutrition-tracker-container {
+    .header-section .header-content .title-section .page-title {
+      font-size: 2rem;
+    }
+    
+    .main-content {
+      .today-overview .progress-cards .progress-card {
+        mat-card-content .progress-values .consumed {
+          font-size: 1.5rem;
+        }
+      }
+      
+      .stats-overview .stats-grid .stat-card {
+        mat-card-content .stat-value {
+          font-size: 1.8rem;
+        }
+      }
+      
+      .charts-section .charts-grid .chart-card .chart-container {
+        height: 200px;
+      }
+    }
+  }
+}

@@ -1,0 +1,555 @@
+.signup-container {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.signup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: -2;
+  
+  .background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: -1;
+  }
+}
+
+.signup-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  width: 100%;
+  gap: 60px;
+  padding: 40px 20px;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.signup-card-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  
+  .signup-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    
+    mat-card-content {
+      padding: 0;
+    }
+  }
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  .logo-icon {
+    margin-bottom: 15px;
+    
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #667eea;
+    }
+  }
+  
+  .logo-text {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .welcome-text {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.signup-form {
+  .form-fields {
+    margin-bottom: 30px;
+    
+    .full-width {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+// Global responsive form improvements
+.mat-mdc-form-field {
+  width: 100%;
+  
+  .mat-mdc-text-field-wrapper {
+    border-radius: 12px;
+  }
+  
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-top: 0.5em;
+  }
+}
+
+// Mobile form field adjustments
+@media (max-width: 600px) {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      border-radius: 8px;
+    }
+    
+    .mat-mdc-floating-label {
+      font-size: 0.9rem;
+    }
+    
+    .mat-mdc-input-element {
+      font-size: 0.9rem;
+      padding: 12px 14px;
+    }
+  }
+  
+  .mat-mdc-button {
+    font-size: 0.9rem !important;
+  }
+  
+  .mat-mdc-raised-button {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-mdc-form-field {
+    .mat-mdc-input-element {
+      font-size: 0.85rem;
+      padding: 10px 12px;
+    }
+    
+    .mat-mdc-floating-label {
+      font-size: 0.85rem;
+    }
+  }
+}
+    
+    // Custom styling for select options
+    .option-text {
+      margin-left: 8px;
+    }
+  }
+  
+  .form-actions {
+    .signup-button {
+      width: 100%;
+      height: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin-bottom: 20px;
+      
+      .button-spinner {
+        margin-right: 10px;
+      }
+      
+      &:hover {
+        background: linear-gradient(135deg, #5a6fd8, #6a4190);
+      }
+      
+      &:disabled {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  
+  p {
+    color: #666;
+    margin: 0;
+    
+    .login-text {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.info-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  
+  .info-content {
+    max-width: 450px;
+    
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      line-height: 1.2;
+    }
+    
+    .benefits-list {
+      .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        
+        .benefit-icon {
+          margin-right: 20px;
+          margin-top: 5px;
+          
+          mat-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+            color: #4caf50;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            padding: 8px;
+          }
+        }
+        
+        .benefit-text {
+          flex: 1;
+          
+          h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+          }
+          
+          p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin: 0;
+            line-height: 1.5;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Error states
+.mat-mdc-form-field.mat-form-field-invalid {
+  .mat-mdc-text-field-wrapper {
+    border-color: #f44336;
+  }
+}
+
+// Server error alert
+.server-error-alert {
+  display: flex;
+  align-items: center;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c62828;
+  font-size: 0.9rem;
+  
+  mat-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #f44336;
+  }
+  
+  span {
+    flex: 1;
+    line-height: 1.4;
+  }
+}
+
+// Responsive Design
+@media (max-width: 1400px) {
+  .signup-content {
+    max-width: 1000px;
+    gap: 50px;
+    padding: 30px 15px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .signup-content {
+    max-width: 900px;
+    gap: 40px;
+    padding: 25px 10px;
+  }
+}
+
+@media (max-width: 968px) {
+  .signup-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .info-panel {
+    order: -1;
+    padding: 20px 0;
+    
+    .info-content {
+      text-align: center;
+      
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 25px;
+      }
+      
+      .benefits-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        
+        .benefit-item {
+          margin-bottom: 15px;
+          text-align: left;
+          align-items: center;
+          
+          .benefit-icon {
+            margin-right: 15px;
+            margin-top: 0;
+            
+            mat-icon {
+              font-size: 28px;
+              width: 28px;
+              height: 28px;
+              padding: 6px;
+            }
+          }
+          
+          .benefit-text {
+            h4 {
+              font-size: 1.1rem;
+            }
+            
+            p {
+              font-size: 0.9rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .signup-card-container .signup-card {
+    max-width: 100%;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .signup-container {
+    padding: 10px;
+  }
+  
+  .signup-content {
+    padding: 15px 10px;
+    gap: 25px;
+    max-width: 450px;
+  }
+  
+  .signup-card-container .signup-card {
+    padding: 25px 20px;
+    margin: 0;
+    border-radius: 15px;
+  }
+  
+  .logo-section {
+    margin-bottom: 30px;
+    
+    .logo-text {
+      font-size: 1.8rem;
+    }
+    
+    .welcome-text {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .signup-form {
+    .form-fields {
+      margin-bottom: 25px;
+      
+      .full-width {
+        margin-bottom: 15px;
+      }
+    }
+    
+    .form-actions .signup-button {
+      height: 45px;
+      font-size: 1rem;
+    }
+  }
+  
+  .info-panel .info-content {
+    h2 {
+      font-size: 1.6rem;
+    }
+    
+    .benefits-list .benefit-item {
+      flex-direction: row;
+      text-align: left;
+      
+      .benefit-icon {
+        margin-right: 12px;
+        margin-bottom: 0;
+        
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          padding: 4px;
+        }
+      }
+      
+      .benefit-text {
+        h4 {
+          font-size: 1rem;
+        }
+        
+        p {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .signup-content {
+    padding: 10px 5px;
+    gap: 20px;
+    max-width: 400px;
+  }
+  
+  .signup-card-container .signup-card {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+  
+  .logo-section {
+    .logo-text {
+      font-size: 1.6rem;
+    }
+    
+    .welcome-text {
+      font-size: 0.85rem;
+    }
+  }
+  
+  .signup-form .form-actions .signup-button {
+    height: 42px;
+    font-size: 0.9rem;
+  }
+  
+  .info-panel .info-content h2 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-content {
+    max-width: 350px;
+    padding: 5px;
+  }
+  
+  .signup-card-container .signup-card {
+    padding: 15px 10px;
+  }
+  
+  .logo-section .logo-text {
+    font-size: 1.4rem;
+  }
+  
+  .signup-form .form-actions .signup-button {
+    height: 40px;
+    font-size: 0.85rem;
+  }
+  
+  .info-panel .info-content .benefits-list .benefit-item {
+    flex-direction: column;
+    text-align: center;
+    
+    .benefit-icon {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .signup-content {
+    padding: 2px;
+    max-width: 320px;
+  }
+  
+  .signup-card-container .signup-card {
+    padding: 12px 8px;
+  }
+  
+  .logo-section {
+    .logo-icon mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .logo-text {
+      font-size: 1.2rem;
+    }
+  }
+  
+  .signup-form .form-fields .full-width {
+    margin-bottom: 10px;
+  }
+}
+
+// Snackbar styles
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
