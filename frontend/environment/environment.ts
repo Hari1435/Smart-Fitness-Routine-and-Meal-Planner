@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://YOUR_SERVER_IP/api',
+  apiUrl: 'https://smart-fitness-routine-and-meal-planner.onrender.com',
 };
