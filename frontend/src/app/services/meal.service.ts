@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface Food {
   id: string;
@@ -148,7 +149,7 @@ export interface ApiResponse<T = any> {
   providedIn: 'root'
 })
 export class MealService {
-  private apiUrl = 'http://localhost:3000/api/v1';
+  private apiUrl = environment.apiUrl;
   private currentMealPlanSubject = new BehaviorSubject<DailyMealPlan | null>(null);
   public currentMealPlan$ = this.currentMealPlanSubject.asObservable();
 
