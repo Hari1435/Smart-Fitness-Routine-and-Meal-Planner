@@ -37,6 +37,13 @@
       height: 28px;
     }
     
+    .logo-image {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      filter: brightness(1.1);
+    }
+    
     .logo-text {
       font-size: 24px;
       font-weight: 600;
@@ -322,6 +329,11 @@
         width: 24px;
         height: 24px;
       }
+      
+      .logo-image {
+        width: 28px;
+        height: 28px;
+      }
     }
     
     .mobile-menu-button {
@@ -348,6 +360,11 @@
       font-size: 22px;
       width: 22px;
       height: 22px;
+    }
+    
+    .logo-image {
+      width: 26px;
+      height: 26px;
     }
   }
   
@@ -397,6 +414,11 @@
       font-size: 20px;
       width: 20px;
       height: 20px;
+    }
+    
+    .logo-image {
+      width: 24px;
+      height: 24px;
     }
   }
   

@@ -140,9 +140,6 @@
               color="primary">
             </mat-badge>
           </h3>
-          <button mat-icon-button (click)="addCustomMeal()" class="add-meal-btn">
-            <mat-icon>add</mat-icon>
-          </button>
         </div>
 
         <div class="meals-grid">
@@ -224,10 +221,6 @@
           <div *ngIf="getMealsByType(mealType).length === 0" class="empty-meal-state">
             <mat-icon class="empty-icon">restaurant_menu</mat-icon>
             <p class="empty-text">No {{ mealType }} planned</p>
-            <button mat-raised-button color="primary" (click)="addCustomMeal()" class="add-meal-btn">
-              <mat-icon>add</mat-icon>
-              Add {{ mealType | titlecase }}
-            </button>
           </div>
         </div>
       </div>
@@ -331,7 +324,7 @@
       <h3 class="no-plan-title">No meal plan for {{ selectedDate | date:'mediumDate' }}</h3>
       <p class="no-plan-text">Generate a personalized meal plan based on your fitness goals.</p>
       <button mat-raised-button color="primary" (click)="generateNewMealPlan()" class="generate-plan-btn">
-        <mat-icon>add</mat-icon>
+        <mat-icon>refresh</mat-icon>
         Generate Meal Plan
       </button>
     </div>
