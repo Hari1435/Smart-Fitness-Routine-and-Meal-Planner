@@ -59,6 +59,9 @@ class Server {
    * Setup middleware
    */
   private setupMiddleware(): void {
+    // Trust proxy for cloud deployment (Render, Heroku, etc.)
+    this.app.set('trust proxy', true);
+    
     // Security middleware
     this.app.use(helmet({
       contentSecurityPolicy: {

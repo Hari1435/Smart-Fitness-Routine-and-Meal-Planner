@@ -68,8 +68,9 @@ export const sanitizeInput = (req: Request, res: Response, next: NextFunction): 
     }
 
     next();
-  } catch (error) {
-    logger.error('Input sanitization error:', error);
+  } catch (error: any) {
+    // Log error with more details but don't block the request
+    logger.warn('Input sanitization warning:', error?.message || 'Unknown sanitization error');
     next(); // Continue without sanitization if there's an error
   }
 };

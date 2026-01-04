@@ -163,6 +163,13 @@ export class EmailService {
 
         if (result.error) {
           logger.error('❌ Resend API error:', result.error);
+          
+          // Handle specific Resend errors
+          if (result.error.message?.includes('domain is not verified')) {
+            logger.error('🚨 DOMAIN ERROR: Use onboarding@resend.dev or verify your domain');
+            logger.error('💡 QUICK FIX: Set EMAIL_FROM=onboarding@resend.dev in environment variables');
+          }
+          
           return false;
         }
 
