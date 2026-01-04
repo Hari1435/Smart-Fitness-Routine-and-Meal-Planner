@@ -99,4 +99,11 @@ router.get('/verify-reset-token/:token', AuthController.verifyResetToken);
  */
 router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
 
+/**
+ * @route   POST /api/v1/auth/test-email-config
+ * @desc    Test email configuration (temporary debugging endpoint)
+ * @access  Public
+ */
+router.post('/test-email-config', AuthController.testEmailConfig);
+
 export default router;

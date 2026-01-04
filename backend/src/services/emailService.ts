@@ -71,6 +71,9 @@ export class EmailService {
     try {
       const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
       
+      logger.info(`Attempting to send password reset email to: ${email}`);
+      logger.info(`Reset URL: ${resetUrl}`);
+      
       const emailOptions: EmailOptions = {
         to: email,
         subject: 'Reset Your FitPlanner Password',
@@ -81,7 +84,7 @@ export class EmailService {
       const result = await this.sendEmail(emailOptions);
       
       if (result) {
-        logger.info(`Password reset email sent to: ${email}`);
+        logger.info(`Password reset email sent successfully to: ${email}`);
         return true;
       } else {
         logger.error(`Failed to send password reset email to: ${email}`);
@@ -89,13 +92,18 @@ export class EmailService {
       }
     } catch (error) {
       logger.error('Error sending password reset email:', error);
-      // In development, we'll return true to not block the flow
-      if (config.nodeEnv === 'development') {
+      
+      // In production, we should still try to send the email
+      // Only return false if it's a critical error
+      if (config.nodeEnv === 'production') {
+        logger.error(`Production email sending failed for ${email}:`, error);
+        return false;
+      } else {
+        // In development, we'll return true to not block the flow
         logger.info(`Development mode: Simulating email sent to ${email}`);
         logger.info(`Reset URL would be: ${config.frontendUrl}/reset-password?token=${resetToken}`);
         return true;
       }
-      return false;
     }
   }
 

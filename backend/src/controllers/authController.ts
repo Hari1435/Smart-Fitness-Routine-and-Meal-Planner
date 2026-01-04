@@ -381,4 +381,54 @@ export class AuthController {
     logger.info(`Password reset completed for token: ${token.substring(0, 8)}...`);
     res.status(200).json(response);
   });
+
+  /**
+   * Test email configuration (temporary endpoint for debugging)
+   */
+  static testEmailConfig = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body;
+    
+    try {
+      // Test email service connection
+      const connectionValid = await EmailService.verifyConnection();
+      
+      // Try to send a test email
+      const testEmail = email || 'test@gmail.com';
+      const emailSent = await EmailService.sendPasswordResetEmail(
+        testEmail, 
+        'test-token-' + Date.now(), 
+        'Test User'
+      );
+      
+      const response: ApiResponse = {
+        success: true,
+        message: 'Email configuration test completed',
+        data: {
+          connectionValid,
+          emailSent,
+          environment: process.env.NODE_ENV,
+          emailUser: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 3) + '***' : 'Not set',
+          emailPassSet: !!process.env.EMAIL_PASS,
+          frontendUrl: process.env.FRONTEND_URL,
+          testEmail
+        }
+      };
+      
+      res.status(200).json(response);
+    } catch (error: any) {
+      const response: ApiResponse = {
+        success: false,
+        message: 'Email configuration test failed',
+        data: {
+          error: error.message,
+          environment: process.env.NODE_ENV,
+          emailUser: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 3) + '***' : 'Not set',
+          emailPassSet: !!process.env.EMAIL_PASS,
+          frontendUrl: process.env.FRONTEND_URL
+        }
+      };
+      
+      res.status(200).json(response);
+    }
+  });
 }
