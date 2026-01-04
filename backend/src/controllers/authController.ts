@@ -7,7 +7,6 @@ import { EmailService } from '../services/emailService';
 import { logger } from '../utils/logger';
 import { asyncHandler, AppError } from '../middleware/errorHandler';
 import { ApiResponse, AuthResponse, CreateUserRequest, LoginRequest, AuthenticatedRequest } from '../types';
-import { config } from '../config/app';
 import crypto from 'crypto';
 
 export class AuthController {
@@ -314,22 +313,12 @@ export class AuthController {
     const emailSent = await EmailService.sendPasswordResetEmail(email, resetToken, user.name);
 
     if (emailSent) {
-      logger.info(`✅ Password reset email sent to: ${email}`);
+      logger.info(`Password reset email sent to: ${email}`);
     } else {
-      logger.error(`❌ Failed to send password reset email to: ${email}`);
-      
-      // ✅ In production, if email fails, we should inform the user
-      if (config.nodeEnv === 'production') {
-        const response: ApiResponse = {
-          success: false,
-          message: 'Unable to send password reset email at this time. Please try again later or contact support.',
-        };
-        res.status(500).json(response);
-        return;
-      }
+      logger.error(`Failed to send password reset email to: ${email}`);
     }
 
-    // Return success (in development or if email was sent successfully)
+    // Always return success for security (don't reveal if email exists)
     const response: ApiResponse = {
       success: true,
       message: 'If an account with that email exists, we have sent a password reset link.',

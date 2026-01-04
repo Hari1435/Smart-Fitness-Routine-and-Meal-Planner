@@ -19,7 +19,7 @@ export const config: AppConfig = {
   rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880'), // 5MB
   uploadPath: process.env.UPLOAD_PATH || 'uploads/',
-  frontendUrl: process.env.FRONTEND_URL!, // ✅ Force required in production
+  frontendUrl: process.env.FRONTEND_URL!,
 };
 
 // Validate required environment variables
@@ -43,17 +43,23 @@ export const validateConfig = (): void => {
   }
   
   if (config.nodeEnv === 'production') {
-    const productionRequiredVars = ['DB_PASSWORD', 'DB_HOST', 'DB_NAME', 'EMAIL_USER', 'EMAIL_PASS', 'FRONTEND_URL'];
+    const productionRequiredVars = ['DB_PASSWORD', 'DB_HOST', 'DB_NAME', 'FRONTEND_URL'];
     const missingProdVars = productionRequiredVars.filter(varName => !process.env[varName]);
     
     if (missingProdVars.length > 0) {
       throw new Error(`Missing required production environment variables: ${missingProdVars.join(', ')}`);
     }
     
-    // Validate Gmail App Password format (should be 16 characters)
-    const emailPass = process.env.EMAIL_PASS;
-    if (emailPass && emailPass.replace(/\s/g, '').length !== 16) {
-      console.warn('⚠️  EMAIL_PASS should be a 16-character Gmail App Password (no spaces)');
+    // Check email service configuration
+    const hasResend = !!process.env.RESEND_API_KEY;
+    const hasGmail = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+    
+    if (!hasResend && !hasGmail) {
+      console.warn('⚠️  WARNING: No email service configured. Set RESEND_API_KEY (recommended) or EMAIL_USER/EMAIL_PASS');
+    } else if (hasResend) {
+      console.log('✅ Email service: Resend API configured');
+    } else if (hasGmail) {
+      console.log('⚠️  Email service: Gmail SMTP configured (may fail on cloud platforms)');
     }
   }
 };

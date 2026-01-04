@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { logger } from '../utils/logger';
 import { config } from '../config/app';
 
@@ -11,22 +12,30 @@ export interface EmailOptions {
 
 export class EmailService {
   private static transporter: nodemailer.Transporter;
+  private static resend: Resend;
+  private static useResend: boolean = false;
 
   /**
-   * Initialize email transporter
+   * Initialize email service - Try Resend first, fallback to Gmail
    */
   static initialize(): void {
     try {
-      // Check if we have Gmail credentials configured
+      const resendApiKey = process.env.RESEND_API_KEY;
       const emailUser = process.env.EMAIL_USER;
       const emailPass = process.env.EMAIL_PASS;
       
-      logger.info(`Initializing email service...`);
-      logger.info(`Email user: ${emailUser ? emailUser.substring(0, 3) + '***' : 'Not set'}`);
-      logger.info(`Email pass: ${emailPass ? '***' + emailPass.substring(emailPass.length - 3) : 'Not set'}`);
+      logger.info(`🔧 Initializing email service...`);
       
+      // ✅ PRIORITY 1: Try Resend (Cloud-friendly)
+      if (resendApiKey) {
+        this.resend = new Resend(resendApiKey);
+        this.useResend = true;
+        logger.info('✅ Email service initialized with Resend API (RECOMMENDED)');
+        return;
+      }
+      
+      // ✅ PRIORITY 2: Try Gmail SMTP (Local development)
       if (emailUser && emailPass && emailUser.includes('@gmail.com')) {
-        // Use Gmail SMTP
         this.transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -36,54 +45,50 @@ export class EmailService {
           debug: config.nodeEnv === 'development',
           logger: config.nodeEnv === 'development'
         });
-        logger.info('Email service initialized with Gmail SMTP');
-      } else if (config.nodeEnv === 'development') {
-        // For development without Gmail, use Ethereal Email (fake SMTP service)
-        // Generate test account credentials
-        const testAccount = {
-          user: 'test.user@ethereal.email',
-          pass: 'test.password'
-        };
+        this.useResend = false;
+        logger.info('⚠️  Email service initialized with Gmail SMTP (may fail on cloud platforms)');
         
-        this.transporter = nodemailer.createTransport({
-          host: 'smtp.ethereal.email',
-          port: 587,
-          secure: false,
-          auth: testAccount
+        // Test Gmail connection in background (non-blocking)
+        this.verifyConnection().then(isValid => {
+          if (isValid) {
+            logger.info('✅ Gmail SMTP connection verified successfully');
+          } else {
+            logger.warn('❌ Gmail SMTP connection failed - consider using Resend');
+          }
+        }).catch(error => {
+          logger.warn('❌ Gmail SMTP connection error:', error);
+          logger.warn('💡 TIP: Use RESEND_API_KEY for reliable cloud email delivery');
         });
-        logger.info('Email service initialized with Ethereal Email for development');
-      } else {
-        // For production, we MUST have proper email credentials
-        logger.error('Production environment requires EMAIL_USER and EMAIL_PASS to be set');
-        throw new Error('Email credentials not configured for production. Set EMAIL_USER and EMAIL_PASS environment variables.');
+        
+        return;
       }
       
-      // Test the connection immediately
-      this.verifyConnection().then(isValid => {
-        if (isValid) {
-          logger.info('Email service connection verified successfully');
-        } else {
-          logger.error('Email service connection verification failed');
-          if (config.nodeEnv === 'production') {
-            throw new Error('Email service connection failed in production');
-          }
-        }
-      }).catch(error => {
-        logger.error('Email service connection verification error:', error);
-        if (config.nodeEnv === 'production') {
-          throw new Error(`Email service connection failed in production: ${error.message}`);
-        }
-      });
+      // ✅ PRIORITY 3: Development fallback
+      if (config.nodeEnv === 'development') {
+        logger.warn('⚠️  DEVELOPMENT MODE: No email service configured');
+        logger.warn('💡 Set RESEND_API_KEY or EMAIL_USER/EMAIL_PASS for email functionality');
+        this.useResend = false;
+        this.transporter = nodemailer.createTransport({
+          streamTransport: true,
+          newline: 'unix',
+          buffer: true
+        });
+        return;
+      }
+      
+      // ❌ PRODUCTION: Must have email service
+      throw new Error('No email service configured. Set RESEND_API_KEY or EMAIL_USER/EMAIL_PASS');
       
     } catch (error: any) {
       logger.error('Failed to initialize email service:', error);
       
       if (config.nodeEnv === 'production') {
         // ✅ PRODUCTION MUST FAIL LOUDLY - NO SILENT FALLBACKS
-        throw new Error(`Email transporter initialization failed in production: ${error?.message || 'Unknown error'}`);
+        throw new Error(`Email service initialization failed in production: ${error?.message || 'Unknown error'}`);
       } else {
         // Only in development, create a mock transporter with clear warnings
         logger.warn('⚠️  DEVELOPMENT MODE: Using mock email transporter - emails will not be sent!');
+        this.useResend = false;
         this.transporter = nodemailer.createTransport({
           streamTransport: true,
           newline: 'unix',
@@ -142,36 +147,58 @@ export class EmailService {
   }
 
   /**
-   * Send generic email
+   * Send generic email - Uses Resend or Gmail based on configuration
    */
   static async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
-      if (!this.transporter) {
-        this.initialize();
-      }
+      if (this.useResend && this.resend) {
+        // ✅ Use Resend API (Cloud-friendly)
+        const result = await this.resend.emails.send({
+          from: process.env.EMAIL_FROM || 'FitPlanner <noreply@fitplanner.com>',
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          text: options.text || options.html.replace(/<[^>]*>/g, '')
+        });
 
-      const mailOptions = {
-        from: `"FitPlanner Support" <${process.env.EMAIL_FROM || 'noreply@fitplanner.com'}>`,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        text: options.text || options.html.replace(/<[^>]*>/g, '') // Strip HTML for text version
-      };
-
-      const info = await this.transporter.sendMail(mailOptions);
-      
-      // Log preview URL for development
-      if (config.nodeEnv === 'development') {
-        const previewUrl = nodemailer.getTestMessageUrl(info);
-        if (previewUrl) {
-          logger.info('Email preview URL:', previewUrl);
+        if (result.error) {
+          logger.error('❌ Resend API error:', result.error);
+          return false;
         }
-        logger.info('✅ Development: Email sent successfully (or mocked)');
-      } else {
-        logger.info('✅ Production: Email sent successfully');
-      }
 
-      return true;
+        logger.info('✅ Email sent successfully via Resend API');
+        logger.info(`📧 Email ID: ${result.data?.id}`);
+        return true;
+        
+      } else {
+        // ✅ Use Gmail SMTP (Fallback)
+        if (!this.transporter) {
+          this.initialize();
+        }
+
+        const mailOptions = {
+          from: `"FitPlanner Support" <${process.env.EMAIL_FROM || 'noreply@fitplanner.com'}>`,
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          text: options.text || options.html.replace(/<[^>]*>/g, '')
+        };
+
+        const info = await this.transporter.sendMail(mailOptions);
+        
+        // Log preview URL for development
+        if (config.nodeEnv === 'development') {
+          const previewUrl = nodemailer.getTestMessageUrl(info);
+          if (previewUrl) {
+            logger.info('📧 Email preview URL:', previewUrl);
+          }
+          logger.info('✅ Development: Email sent successfully (or mocked)');
+        } else {
+          logger.info('✅ Production: Email sent successfully via Gmail SMTP');
+        }
+
+        return true;
+      }
     } catch (error: any) {
       logger.error('❌ Error sending email:', error);
       
@@ -182,6 +209,9 @@ export class EmailService {
         logger.error('   - App Password not generated or expired');
         logger.error('   - 2-Factor Authentication not enabled');
         logger.error('   - Server IP blocked by Google');
+      } else if (error.code === 'ETIMEDOUT') {
+        logger.error('🚨 SMTP connection timeout - likely blocked by hosting platform');
+        logger.error('💡 SOLUTION: Use RESEND_API_KEY instead of Gmail SMTP');
       }
       
       if (config.nodeEnv === 'production') {
@@ -347,19 +377,26 @@ The FitPlanner Team
   }
 
   /**
-   * Verify email service configuration
+   * Verify email service connection
    */
   static async verifyConnection(): Promise<boolean> {
     try {
-      if (!this.transporter) {
-        this.initialize();
+      if (this.useResend && this.resend) {
+        // For Resend, we can't really "verify" connection without sending an email
+        // But we can check if the API key is set
+        logger.info('✅ Resend API configured - connection assumed valid');
+        return true;
+      } else {
+        if (!this.transporter) {
+          this.initialize();
+        }
+        
+        await this.transporter.verify();
+        logger.info('✅ Gmail SMTP connection verified');
+        return true;
       }
-      
-      await this.transporter.verify();
-      logger.info('Email service connection verified');
-      return true;
     } catch (error: any) {
-      logger.error('Email service connection failed:', error);
+      logger.error('❌ Email service connection failed:', error);
       return false;
     }
   }
