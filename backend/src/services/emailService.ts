@@ -21,6 +21,10 @@ export class EmailService {
       const emailUser = process.env.EMAIL_USER;
       const emailPass = process.env.EMAIL_PASS;
       
+      logger.info(`Initializing email service...`);
+      logger.info(`Email user: ${emailUser ? emailUser.substring(0, 3) + '***' : 'Not set'}`);
+      logger.info(`Email pass: ${emailPass ? '***' + emailPass.substring(emailPass.length - 3) : 'Not set'}`);
+      
       if (emailUser && emailPass && emailUser.includes('@gmail.com')) {
         // Use Gmail SMTP
         this.transporter = nodemailer.createTransport({
@@ -28,39 +32,64 @@ export class EmailService {
           auth: {
             user: emailUser,
             pass: emailPass
-          }
+          },
+          debug: config.nodeEnv === 'development',
+          logger: config.nodeEnv === 'development'
         });
         logger.info('Email service initialized with Gmail SMTP');
       } else if (config.nodeEnv === 'development') {
         // For development without Gmail, use Ethereal Email (fake SMTP service)
+        // Generate test account credentials
+        const testAccount = {
+          user: 'test.user@ethereal.email',
+          pass: 'test.password'
+        };
+        
         this.transporter = nodemailer.createTransport({
           host: 'smtp.ethereal.email',
           port: 587,
-          auth: {
-            user: 'ethereal.user@ethereal.email',
-            pass: 'ethereal.pass'
-          }
+          secure: false,
+          auth: testAccount
         });
         logger.info('Email service initialized with Ethereal Email for development');
       } else {
-        // For production, use real SMTP service
-        this.transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER || 'your-email@gmail.com',
-            pass: process.env.EMAIL_PASS || 'your-app-password'
-          }
-        });
-        logger.info('Email service initialized with production SMTP');
+        // For production, we MUST have proper email credentials
+        logger.error('Production environment requires EMAIL_USER and EMAIL_PASS to be set');
+        throw new Error('Email credentials not configured for production. Set EMAIL_USER and EMAIL_PASS environment variables.');
       }
-    } catch (error) {
-      logger.error('Failed to initialize email service:', error);
-      // Create a mock transporter for fallback
-      this.transporter = nodemailer.createTransport({
-        streamTransport: true,
-        newline: 'unix',
-        buffer: true
+      
+      // Test the connection immediately
+      this.verifyConnection().then(isValid => {
+        if (isValid) {
+          logger.info('Email service connection verified successfully');
+        } else {
+          logger.error('Email service connection verification failed');
+          if (config.nodeEnv === 'production') {
+            throw new Error('Email service connection failed in production');
+          }
+        }
+      }).catch(error => {
+        logger.error('Email service connection verification error:', error);
+        if (config.nodeEnv === 'production') {
+          throw new Error(`Email service connection failed in production: ${error.message}`);
+        }
       });
+      
+    } catch (error: any) {
+      logger.error('Failed to initialize email service:', error);
+      
+      if (config.nodeEnv === 'production') {
+        // ✅ PRODUCTION MUST FAIL LOUDLY - NO SILENT FALLBACKS
+        throw new Error(`Email transporter initialization failed in production: ${error?.message || 'Unknown error'}`);
+      } else {
+        // Only in development, create a mock transporter with clear warnings
+        logger.warn('⚠️  DEVELOPMENT MODE: Using mock email transporter - emails will not be sent!');
+        this.transporter = nodemailer.createTransport({
+          streamTransport: true,
+          newline: 'unix',
+          buffer: true
+        });
+      }
     }
   }
 
@@ -69,10 +98,16 @@ export class EmailService {
    */
   static async sendPasswordResetEmail(email: string, resetToken: string, userName: string): Promise<boolean> {
     try {
+      // ✅ Validate frontend URL before generating reset link
+      if (!config.frontendUrl) {
+        logger.error('🚨 FRONTEND_URL not configured - cannot generate reset link');
+        throw new Error('Frontend URL not configured');
+      }
+      
       const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
       
-      logger.info(`Attempting to send password reset email to: ${email}`);
-      logger.info(`Reset URL: ${resetUrl}`);
+      logger.info(`📧 Attempting to send password reset email to: ${email}`);
+      logger.info(`🔗 Reset URL: ${resetUrl}`);
       
       const emailOptions: EmailOptions = {
         to: email,
@@ -84,24 +119,23 @@ export class EmailService {
       const result = await this.sendEmail(emailOptions);
       
       if (result) {
-        logger.info(`Password reset email sent successfully to: ${email}`);
+        logger.info(`✅ Password reset email sent successfully to: ${email}`);
         return true;
       } else {
-        logger.error(`Failed to send password reset email to: ${email}`);
+        logger.error(`❌ Failed to send password reset email to: ${email}`);
         return false;
       }
-    } catch (error) {
-      logger.error('Error sending password reset email:', error);
+    } catch (error: any) {
+      logger.error('💥 Error in sendPasswordResetEmail:', error);
       
-      // In production, we should still try to send the email
-      // Only return false if it's a critical error
       if (config.nodeEnv === 'production') {
-        logger.error(`Production email sending failed for ${email}:`, error);
+        // ✅ PRODUCTION: Return false so auth controller can handle the error properly
+        logger.error('🚨 Production email sending failed - forgot password will fail');
         return false;
       } else {
-        // In development, we'll return true to not block the flow
-        logger.info(`Development mode: Simulating email sent to ${email}`);
-        logger.info(`Reset URL would be: ${config.frontendUrl}/reset-password?token=${resetToken}`);
+        // Development: Log the error but simulate success for testing
+        logger.info(`⚠️  Development mode: Simulating email sent to ${email}`);
+        logger.info(`🔗 Reset URL would be: ${config.frontendUrl}/reset-password?token=${resetToken}`);
         return true;
       }
     }
@@ -132,23 +166,33 @@ export class EmailService {
         if (previewUrl) {
           logger.info('Email preview URL:', previewUrl);
         }
+        logger.info('✅ Development: Email sent successfully (or mocked)');
+      } else {
+        logger.info('✅ Production: Email sent successfully');
       }
 
       return true;
     } catch (error: any) {
-      logger.error('Error sending email:', error);
+      logger.error('❌ Error sending email:', error);
       
-      // In development mode, log the error but don't fail the request
-      if (config.nodeEnv === 'development') {
-        logger.warn('Development mode: Email sending failed, but continuing...');
-        if (error.code === 'EAUTH') {
-          logger.warn('Gmail authentication failed. Please check EMAIL_USER and EMAIL_PASS in .env file.');
-          logger.warn('Make sure you are using an App Password, not your regular Gmail password.');
-        }
-        return true; // Return true in development to not block the flow
+      // Log specific Gmail authentication errors
+      if (error.code === 'EAUTH') {
+        logger.error('🚨 Gmail authentication failed. Possible causes:');
+        logger.error('   - Using regular Gmail password instead of App Password');
+        logger.error('   - App Password not generated or expired');
+        logger.error('   - 2-Factor Authentication not enabled');
+        logger.error('   - Server IP blocked by Google');
       }
       
-      return false;
+      if (config.nodeEnv === 'production') {
+        // ✅ PRODUCTION MUST FAIL - NO SILENT SUCCESS
+        logger.error('🚨 Production email sending failed - this will cause forgot password to fail');
+        return false;
+      } else {
+        // In development, log warning but don't block the flow
+        logger.warn('⚠️  Development mode: Email sending failed, but continuing...');
+        return true; // Only return true in development for testing
+      }
     }
   }
 
@@ -314,7 +358,7 @@ The FitPlanner Team
       await this.transporter.verify();
       logger.info('Email service connection verified');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Email service connection failed:', error);
       return false;
     }

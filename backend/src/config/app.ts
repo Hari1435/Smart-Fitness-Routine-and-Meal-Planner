@@ -19,7 +19,7 @@ export const config: AppConfig = {
   rateLimitMaxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880'), // 5MB
   uploadPath: process.env.UPLOAD_PATH || 'uploads/',
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:4200',
+  frontendUrl: process.env.FRONTEND_URL!, // ✅ Force required in production
 };
 
 // Validate required environment variables
@@ -32,12 +32,28 @@ export const validateConfig = (): void => {
     throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
   }
   
+  // ✅ CRITICAL: Validate frontend URL in production
+  if (!config.frontendUrl) {
+    throw new Error('FRONTEND_URL environment variable is required');
+  }
+  
+  // Validate frontend URL format
+  if (config.nodeEnv === 'production' && !config.frontendUrl.startsWith('https://')) {
+    throw new Error('FRONTEND_URL must use HTTPS in production');
+  }
+  
   if (config.nodeEnv === 'production') {
-    const productionRequiredVars = ['DB_PASSWORD', 'DB_HOST', 'DB_NAME'];
+    const productionRequiredVars = ['DB_PASSWORD', 'DB_HOST', 'DB_NAME', 'EMAIL_USER', 'EMAIL_PASS', 'FRONTEND_URL'];
     const missingProdVars = productionRequiredVars.filter(varName => !process.env[varName]);
     
     if (missingProdVars.length > 0) {
       throw new Error(`Missing required production environment variables: ${missingProdVars.join(', ')}`);
+    }
+    
+    // Validate Gmail App Password format (should be 16 characters)
+    const emailPass = process.env.EMAIL_PASS;
+    if (emailPass && emailPass.replace(/\s/g, '').length !== 16) {
+      console.warn('⚠️  EMAIL_PASS should be a 16-character Gmail App Password (no spaces)');
     }
   }
 };
