@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -112,7 +112,7 @@ class Server {
     this.app.use(sanitizeInput);
 
     // Health check endpoint
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: 'Server is healthy',
@@ -126,7 +126,7 @@ class Server {
     });
 
     // Debug endpoint to check database content
-    this.app.get('/debug/workouts', async (req, res) => {
+    this.app.get('/debug/workouts', async (req: Request, res: Response) => {
       try {
         const { pool } = require('./config/database');
         const connection = await pool.getConnection();
@@ -148,7 +148,7 @@ class Server {
     });
 
     // Debug endpoint to check users
-    this.app.get('/debug/users', async (req, res) => {
+    this.app.get('/debug/users', async (req: Request, res: Response) => {
       try {
         const { pool } = require('./config/database');
         const connection = await pool.getConnection();
@@ -226,7 +226,7 @@ class Server {
     this.app.use(`/api/${config.apiVersion}`, apiRouter);
 
     // Root endpoint
-    this.app.get('/', (req, res) => {
+    this.app.get('/', (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: 'Smart Fitness Planner API',

@@ -109,6 +109,10 @@ export interface JWTPayload {
 
 export interface AuthenticatedRequest extends Request {
   user?: JWTPayload;
+  body: any;
+  params: any;
+  query: any;
+  headers: any;
 }
 
 // API Response Types
